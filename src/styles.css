@@ -1,0 +1,252 @@
+/* You can add global styles to this file, and also import other style files */
+body {
+    font-family: "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    color: #999;
+    line-height: 2;
+    background-image: -webkit-linear-gradient(330deg, #005ad7 0%, #89f7fe 100%);
+    background-image: -o-linear-gradient(330deg, #207dff 0%, #89f7fe 100%);
+    background-image: linear-gradient(120deg, #4894ff 0%, #89f7fe 100%); }
+  
+  h1, h2, h3, h4, h5, h6,
+  .h1, .h2, .h3, .h4, .h5, .h6 {
+    font-family: "Poppins", sans-serif;
+    color: #000; }
+  
+  a {
+    -webkit-transition: .3s all ease;
+    -o-transition: .3s all ease;
+    transition: .3s all ease; }
+    a, a:hover {
+      text-decoration: none !important; }
+  
+  .text-black {
+    color: #000; }
+  
+  .content {
+    padding: 7rem 0; }
+  
+  h2 {
+    font-size: 3.5rem;
+    font-weight: 700; }
+  
+  h3 {
+    font-size: 2rem;
+    font-weight: 700; }
+  
+  .form-control {
+    border: none;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px; }
+    .form-control:active, .form-control:focus {
+      outline: none;
+      -webkit-box-shadow: none;
+      box-shadow: none;
+      border-color: #000; }
+  
+  .col-form-label {
+    color: #000; }
+  
+  .btn, .form-control {
+    height: 55px; }
+  
+  .heading {
+    color: #888;
+    letter-spacing: .05rem;
+    text-transform: uppercase;
+    font-weight: 400; }
+  
+  .btn {
+    color: #fff;
+    border: none;
+    border-radius: 4px !important;
+    -webkit-box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.1) !important; }
+    .btn:hover {
+      color: #fff; }
+    .btn:active, .btn:focus {
+      outline: none;
+      -webkit-box-shadow: none;
+      box-shadow: none; }
+  
+  .box {
+    padding: 40px 70px;
+    background: #fff;
+    -webkit-box-shadow: 0 15px 30px 0 rgba(0, 0, 0, 0.2);
+    box-shadow: 0 15px 30px 0 rgba(0, 0, 0, 0.2); 
+    border-radius: 15px;
+  }
+    .box h3 {
+      font-size: 14px;
+      margin-bottom: 30px;
+      text-align: center; }
+  
+  label.error {
+    font-size: 12px;
+    color: red; }
+  
+  #message {
+    resize: vertical; }
+  
+  #form-message-warning, #form-message-success {
+    display: none; }
+  
+  #form-message-warning {
+    color: #B90B0B; }
+  
+  #form-message-success {
+    color: #55A44E;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center; }
+  
+  .submitting {
+    text-align: center;
+    float: left;
+    width: 100%;
+    padding: 10px 0;
+    display: none;
+    font-weight: bold;
+    font-size: 12px;
+    color: #000; }
+  
+    .range-labels {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      font-size: 20px;
+    }
+    
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1040;
+    }
+    
+    .modal-content {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      max-width: 500px;
+      width: 100%;
+      overflow-y: auto;
+    }
+    
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    
+    .heading {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    /* Estilos para los botones dentro de la lista de alternativas */
+.list-group-item .btn {
+  min-width: 75px; /* Ajusta esto según tus necesidades */
+  margin-left: 5px;
+  margin-right: 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Asegurar que los íconos no se desborden */
+.list-group-item .btn i {
+  margin-right: 5px;
+}
+
+/* Estilos para el grupo de botones dentro de la lista de alternativas */
+.list-group-item .btn-group {
+  display: flex;
+  gap: 5px;
+}
+
+/* Estilos adicionales para botones pequeños */
+.list-group-item .btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.8;
+  border-radius: 0.2rem;
+}
+
+/* Ajustar el tamaño y el desplazamiento del contenido del modal */
+.modal-content {
+  width: 700px !important;
+  max-width: 700px !important;
+  overflow-y: auto !important;
+}
+
+/* Habilitar el desplazamiento vertical en el cuerpo del modal */
+.modal-body {
+  overflow-y: auto; /* Habilita el desplazamiento vertical */
+}
+
+/* Estilo para el modal de alternativas */
+#alternativesModal .modal-body {
+  max-height: 400px; /* Ajusta esta altura según tus necesidades */
+  overflow-y: auto;
+}
+
+/* Estilo para centrar el modal en la pantalla */
+.modal.show .modal-dialog {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 1rem);
+}
+
+/* Otros estilos necesarios para asegurar que el modal se muestre correctamente */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1040;
+}
+
+.modal-content {
+  position: relative;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 0.3rem;
+  outline: 0;
+}
+
+.modal-dialog {
+  max-width: 100%;
+  margin: 1.75rem auto;
+}
+
+.modal.fade.show.d-block {
+  display: block;
+}
+
+.notification {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #28a745;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1050;
+  opacity: 0.9;
+  transition: opacity 0.5s;
+}
+
+
+    
