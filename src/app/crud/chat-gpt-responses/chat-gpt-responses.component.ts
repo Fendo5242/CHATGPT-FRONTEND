@@ -1,27 +1,27 @@
 import { Component, OnInit } from '@angular/core';
 import { QuestionService } from '../../question.service';
-import { CommonModule } from '@angular/common'; // Importa CommonModule
+import { CommonModule } from '@angular/common'; 
 
 @Component({
   selector: 'app-response-list',
-  standalone: true, // Indica que es un componente independiente
-  imports: [CommonModule], // Agrega CommonModule aquí
+  standalone: true, 
+  imports: [CommonModule], 
   templateUrl: './chat-gpt-responses.component.html',
   styleUrls: ['./chat-gpt-responses.component.css']
 })
 export class ChatGptResponsesComponent implements OnInit {
-  responses: any[] = []; // Almacena las respuestas
-  selectedResponse: any | null = null; // Almacena la respuesta seleccionada
+  responses: any[] = []; 
+  selectedResponse: any | null = null; 
 
   constructor(private responseService: QuestionService) { }
 
   ngOnInit(): void {
-    this.loadResponses(); // Carga las respuestas al iniciar el componente
+    this.loadResponses();
   }
 
   loadResponses(): void {
     this.responseService.getAllResponses().subscribe((data: any[]) => {
-      this.responses = data.sort((a, b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime()); 
+      this.responses = data.sort((a, b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime()); // Ordena los datos de forma descendente por fecha
     });
   }
 
@@ -33,4 +33,5 @@ export class ChatGptResponsesComponent implements OnInit {
     this.selectedResponse = null; 
   }
 }
+
 
