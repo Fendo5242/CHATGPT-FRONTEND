@@ -1,19 +1,19 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, forkJoin } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class QuestionService {
   private baseUrl = 'https://chatgpt-api20240720143212.azurewebsites.net';
-  // private baseUrl = 'https://localhost:7071';
+  //private baseUrl = 'https://localhost:7071';
   private apiUrl = `${this.baseUrl}/Categories`;
   private userResponseUrl = `${this.baseUrl}/UserResponse`;
   private questionUrl = `${this.baseUrl}/Questions`;
   private questionTypeUrl = `${this.baseUrl}/QuestionTypes`;
   private alternativeUrl = `${this.baseUrl}/Alternatives`;
-  private chatGptUrl = `${this.baseUrl}/ChatGpt/ProcessUserResponses`;
+  private chatGptUrl = `${this.baseUrl}/ChatGpt`;
 
   constructor(private http: HttpClient) { }
 
@@ -84,7 +84,18 @@ export class QuestionService {
 
   // ChatGPT
   processUserResponses(userResponseRequest: any): Observable<any> {
-    return this.http.post<any>(this.chatGptUrl, userResponseRequest);
+    return this.http.post<any>(`${this.chatGptUrl}/ProcessUserResponses`, userResponseRequest);
+  }
+
+  getAllResponses(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.chatGptUrl}/GetAllResponses`);
+  }
+
+  getAllData(): Observable<any> {
+    return forkJoin({
+      responses: this.getAllResponses(),
+      questions: this.getQuestions(),
+      categories: this.getCategories()
+    });
   }
 }
-
