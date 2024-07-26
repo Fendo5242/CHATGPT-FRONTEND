@@ -21,15 +21,16 @@ export class ChatGptResponsesComponent implements OnInit {
 
   loadResponses(): void {
     this.responseService.getAllResponses().subscribe((data: any[]) => {
-      this.responses = data; // Asigna los datos recibidos a la propiedad responses
+      this.responses = data.sort((a, b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime()); 
     });
   }
 
   viewResponse(response: any): void {
-    this.selectedResponse = response; // Establece la respuesta seleccionada
+    this.selectedResponse = response; 
   }
 
   closeModal(): void {
-    this.selectedResponse = null; // Cierra el modal
+    this.selectedResponse = null; 
   }
 }
+

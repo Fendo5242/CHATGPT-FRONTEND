@@ -3,13 +3,13 @@ body {
   font-family: "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   color: #999;
   line-height: 2;
-  background-image: linear-gradient(120deg, #4894ff 0%, #89f7fe 100%);
+  background-image: linear-gradient(120deg, #207dff 0%, #a8f9ff 100%);
 }
 
 h1, h2, h3, h4, h5, h6,
 .h1, .h2, .h3, .h4, .h5, .h6 {
   font-family: "Poppins", sans-serif;
-  color: #000;
+  color: #ffffff;
 }
 
 a {
