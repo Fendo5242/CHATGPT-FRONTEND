@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { QuestionService } from '../question.service';
+import { QuestionService } from '../services/question.service';
 
 @Component({
   selector: 'app-insert',

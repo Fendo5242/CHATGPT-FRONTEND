@@ -6,18 +6,21 @@ import { Observable, forkJoin } from 'rxjs';
   providedIn: 'root'
 })
 export class QuestionService {
-  private baseUrl = 'https://chatgpt-api20240720143212.azurewebsites.net';
-  //private baseUrl = 'https://localhost:7071';
+  private baseUrl = 'https://chatgpt-api20240720143212.azurewebsites.net/'; 
+  //private baseUrl = 'https://localhost:7071'; 
   private apiUrl = `${this.baseUrl}/Categories`;
   private userResponseUrl = `${this.baseUrl}/UserResponse`;
   private questionUrl = `${this.baseUrl}/Questions`;
   private questionTypeUrl = `${this.baseUrl}/QuestionTypes`;
   private alternativeUrl = `${this.baseUrl}/Alternatives`;
   private chatGptUrl = `${this.baseUrl}/ChatGpt`;
+  private userUrl = `${this.baseUrl}/Users`;
 
   constructor(private http: HttpClient) { }
 
-  // Categories
+  // ===========================
+  //        CATEGORIES
+  // ===========================
   getCategories(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrl);
   }
@@ -34,7 +37,9 @@ export class QuestionService {
     return this.http.delete<any>(`${this.apiUrl}/${id}`);
   }
 
-  // Questions
+  // ===========================
+  //        QUESTIONS
+  // ===========================
   getQuestions(): Observable<any[]> {
     return this.http.get<any[]>(this.questionUrl);
   }
@@ -51,12 +56,16 @@ export class QuestionService {
     return this.http.delete<any>(`${this.questionUrl}/${id}`);
   }
 
-  // Question Types
+  // ===========================
+  //     QUESTION TYPES
+  // ===========================
   getQuestionTypes(): Observable<any[]> {
     return this.http.get<any[]>(this.questionTypeUrl);
   }
 
-  // Alternatives
+  // ===========================
+  //        ALTERNATIVES
+  // ===========================
   getAlternatives(): Observable<any[]> {
     return this.http.get<any[]>(this.alternativeUrl);
   }
@@ -73,7 +82,9 @@ export class QuestionService {
     return this.http.delete<any>(`${this.alternativeUrl}/${id}`);
   }
 
-  // User Responses
+  // ===========================
+  //    USER RESPONSES
+  // ===========================
   saveUserResponse(response: any): Observable<any> {
     return this.http.post<any>(this.userResponseUrl, response);
   }
@@ -82,7 +93,9 @@ export class QuestionService {
     return this.http.get<any>(`${this.apiUrl}/${categoryId}/Questions`);
   }
 
-  // ChatGPT
+  // ===========================
+  //        ChatGPT
+  // ===========================
   processUserResponses(userResponseRequest: any): Observable<any> {
     return this.http.post<any>(`${this.chatGptUrl}/ProcessUserResponses`, userResponseRequest);
   }
@@ -97,5 +110,16 @@ export class QuestionService {
       questions: this.getQuestions(),
       categories: this.getCategories()
     });
+  }
+
+  // ===========================
+  //        USERS
+  // ===========================
+  createUser(user: any): Observable<any> {
+    return this.http.post<any>(this.userUrl, user);
+  }
+
+  loginUser(loginRequest: any): Observable<any> {
+    return this.http.post<any>(`${this.userUrl}/Login`, loginRequest);
   }
 }

@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
-import { QuestionService } from '../../question.service';
-import { NotificationService } from '../../notification.service'; // Importar el servicio de notificación
+import { QuestionService } from '../../services/question.service';
+import { NotificationService } from '../../services/notification.service'; // Importar el servicio de notificación
 
 @Component({
   selector: 'app-question',

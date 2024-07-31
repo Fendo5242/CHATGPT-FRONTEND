@@ -1,6 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap");
 
-
 .navbar{
     background-color: white;
     height: 90px;
@@ -18,54 +17,60 @@ body {
   font-family: "Poppins", sans-serif;
 }
 
-nav {
+.navbar {
+  background-color: white;
+  height: 90px;
   padding: 5px 5%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
-    rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
   z-index: 1;
 }
 
-nav .logo {
+.navbar .logo {
   display: flex;
   align-items: center;
 }
 
-nav .logo img {
+.navbar .logo img {
   height: 25px;
   width: auto;
   margin-right: 10px;
 }
 
-nav .logo h1 {
+.navbar .logo h1 {
   font-size: 1.1rem;
   background: linear-gradient(to right, #0057d2 0%, #fcbe2c 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  align-items: center; /* Centrar verticalmente los elementos dentro del ul */
 }
 
-nav ul {
+.navbar ul {
   list-style: none;
   display: flex;
+  align-items: center; /* Centrar verticalmente los elementos dentro del ul */
+  padding: 0;
+  margin: 0;
 }
 
-nav ul li {
+.navbar ul li {
   margin-left: 1.5rem;
 }
 
-nav ul li a {
+.navbar ul li a {
   text-decoration: none;
   color: #000;
   font-size: 95%;
   font-weight: 400;
   padding: 4px 8px;
   border-radius: 5px;
+  cursor: pointer;
 }
 
-nav ul li a:hover {
+.navbar ul li a:hover {
   background-color: #f5f5f5;
 }
 
@@ -119,11 +124,13 @@ nav ul li a:hover {
   background: rgba(255, 255, 255);
   transition: all 0.5s ease-in;
   z-index: 2;
+  pointer-events: none; /* Añadir pointer-events para asegurar que los enlaces sean clicables */
 }
 
-.active {
+.menubar.active {
   left: 0;
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  pointer-events: auto; /* Habilitar pointer-events cuando el menú esté activo */
 }
 
 .menubar ul {
@@ -142,6 +149,7 @@ nav ul li a:hover {
   font-weight: 400;
   padding: 5px 10px;
   border-radius: 5px;
+  cursor: pointer;
 }
 
 .menubar ul li a:hover {
@@ -155,4 +163,20 @@ nav ul li a:hover {
   nav ul {
     display: none;
   }
+}
+
+li a img {
+  width: 40px; /* Ajusta el ancho según sea necesario */
+  height: 40px; /* Ajusta la altura según sea necesario */
+  vertical-align: middle; /* Alinea verticalmente la imagen */
+}
+
+.navbar ul {
+  align-items: center; /* Centrar verticalmente los elementos dentro del ul */
+}
+
+.navbar a {
+  text-decoration: none; /* Eliminar el subrayado de los enlaces */
+  color: #000; /* Color del texto */
+  font-weight: bold; /* Estilo del texto */
 }

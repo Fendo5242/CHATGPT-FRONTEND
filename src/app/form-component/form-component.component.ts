@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { QuestionService } from '../question.service';
+import { QuestionService } from '../services/question.service';
 import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
