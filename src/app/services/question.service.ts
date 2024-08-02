@@ -6,8 +6,8 @@ import { Observable, forkJoin } from 'rxjs';
   providedIn: 'root'
 })
 export class QuestionService {
-  private baseUrl = 'https://chatgpt-api20240720143212.azurewebsites.net/'; 
   //private baseUrl = 'https://localhost:7071'; 
+  private baseUrl = 'https://chatgpt-api20240720143212.azurewebsites.net/'; 
   private apiUrl = `${this.baseUrl}/Categories`;
   private userResponseUrl = `${this.baseUrl}/UserResponse`;
   private questionUrl = `${this.baseUrl}/Questions`;
@@ -56,6 +56,10 @@ export class QuestionService {
     return this.http.delete<any>(`${this.questionUrl}/${id}`);
   }
 
+  getQuestionsByCategory(categoryId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${categoryId}/Questions`);
+  }
+
   // ===========================
   //     QUESTION TYPES
   // ===========================
@@ -89,10 +93,6 @@ export class QuestionService {
     return this.http.post<any>(this.userResponseUrl, response);
   }
 
-  getQuestionsByCategory(categoryId: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${categoryId}/Questions`);
-  }
-
   // ===========================
   //        ChatGPT
   // ===========================
@@ -112,6 +112,28 @@ export class QuestionService {
     });
   }
 
+  getResponseById(id: number): Observable<any> {
+    return this.http.get<any>(`${this.chatGptUrl}/${id}`);
+  }
+
+  requestAndSaveResponse(requestPayload: any): Observable<any> {
+    return this.http.post<any>(`${this.chatGptUrl}/RequestAndSaveResponse`, requestPayload);
+  }
+
+  // Nuevo método para obtener la última respuesta de un usuario
+  getLastResponse(userId: number): Observable<any> {
+    return this.http.get<any>(`${this.chatGptUrl}/GetLastResponse/${userId}`);
+  }
+  
+  // Nuevo método para obtener el último request
+  getLastRequest(): Observable<{ request: string }> {
+    return this.http.get<{ request: string }>(`${this.chatGptUrl}/GetLatestRequest`);
+  }
+
+  saveRequest(request: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/save-request`, { request });
+  }
+  
   // ===========================
   //        USERS
   // ===========================
@@ -123,3 +145,4 @@ export class QuestionService {
     return this.http.post<any>(`${this.userUrl}/Login`, loginRequest);
   }
 }
+

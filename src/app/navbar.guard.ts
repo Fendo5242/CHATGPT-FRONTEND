@@ -1,10 +1,19 @@
-import { CanActivateFn, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { CanActivateFn, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
+import { inject } from '@angular/core';
+import { AuthService } from './services/auth.service';
 
-// Guard que controla la visibilidad del Navbar
+// Guard que controla la visibilidad del Navbar y la autenticación del usuario
 export const navbarGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
-  // Aquí puedes definir las rutas en las que no deseas mostrar el navbar
-  const restrictedRoutes = ['/login'];
+  const authService = inject(AuthService);
+  const router = inject(Router);
 
-  // Retorna verdadero si la URL actual no está en las rutas restringidas
-  return !restrictedRoutes.includes(state.url);
+  // Verificar si el usuario está autenticado
+  if (!authService.isAuthenticated()) {
+    // Redirigir al usuario a la ruta /form si no está autenticado
+    router.navigate(['/form']);
+    return false;
+  }
+
+  // Permitir la navegación
+  return true;
 };
