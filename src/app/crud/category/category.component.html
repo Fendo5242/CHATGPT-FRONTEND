@@ -1,0 +1,92 @@
+<br>
+<br>
+<div class="container">
+  <h2 class="text-center">Category Management</h2>
+  <div class="box">
+    <h3 class="heading">Create a New Category</h3>
+    <form #categoryForm="ngForm" (ngSubmit)="addCategory(categoryForm)">
+      <div class="form-group">
+        <label for="categoryNameEn">Name (English)</label>
+        <input type="text" class="form-control" id="categoryNameEn" [(ngModel)]="newCategory.nameEn" name="nameEn" required>
+      </div>
+      <div class="form-group">
+        <label for="categoryNameEs">Name (Spanish)</label>
+        <input type="text" class="form-control" id="categoryNameEs" [(ngModel)]="newCategory.nameEs" name="nameEs" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+  <br>
+  <div class="box">
+    <h3 class="heading">Category List</h3>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Name (English)</th>
+          <th scope="col">Name (Spanish)</th>
+          <th scope="col">Edit</th>
+          <th scope="col">Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let category of categories">
+          <th scope="row">{{ category.categoryID }}</th>
+          <td>{{ category.nameEn }}</td>
+          <td>{{ category.nameEs }}</td>
+          <td>
+            <button (click)="editCategory(category)" class="btn btn-warning">Edit</button>
+          </td>
+          <td>
+            <button (click)="confirmDelete(category)" class="btn btn-danger">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <!-- Formulario de edición emergente para categorías -->
+  <div *ngIf="selectedCategory" id="editCategoryModal" class="modal-backdrop">
+    <div class="modal-content">
+      <h3 class="heading">Edit Category</h3>
+      <form #editCategoryForm="ngForm" (ngSubmit)="updateCategory(editCategoryForm)">
+        <div class="form-group">
+          <label for="editCategoryNameEn">Name (English)</label>
+          <input type="text" class="form-control" id="editCategoryNameEn" [(ngModel)]="selectedCategory.nameEn" name="editNameEn" required>
+        </div>
+        <div class="form-group">
+          <label for="editCategoryNameEs">Name (Spanish)</label>
+          <input type="text" class="form-control" id="editCategoryNameEs" [(ngModel)]="selectedCategory.nameEs" name="editNameEs" required>
+        </div>
+        <div class="button-group">
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+          <button type="button" class="btn btn-secondary" (click)="cancelEdit()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<br>
+<!-- Ventana emergente para confirmar eliminación -->
+<div *ngIf="categoryToDelete" class="modal-backdrop">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title">Confirm Delete</h5>
+      <button type="button" class="close" (click)="cancelDelete()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p>Are you sure you want to delete this category?</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="cancelDelete()">Cancel</button>
+      <button type="button" class="btn btn-danger" (click)="deleteCategoryConfirmed()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- Contenedor de notificación -->
+<div id="notification-container" class="notification" *ngIf="alertMessage">
+  {{ alertMessage }}
+</div>

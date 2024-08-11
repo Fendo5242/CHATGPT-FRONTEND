@@ -1,0 +1,58 @@
+<nav class="navbar">
+  <div class="logo">
+    <h1>CHATGPT POST V1.2</h1>
+  </div>
+  <ul>
+    <li>
+      <a routerLink="/form" routerLinkActive="active">Form</a>
+    </li>
+    <li *ngIf="isAuthenticated()">
+      <a routerLink="/categories" routerLinkActive="active">Categories</a>
+    </li>
+    <li *ngIf="isAuthenticated()">
+      <a routerLink="/questions" routerLinkActive="active">Questions</a>
+    </li>
+    <li *ngIf="isAuthenticated()">
+      <a routerLink="/alternatives" routerLinkActive="active">Alternatives</a>
+    </li>
+    <li *ngIf="isAuthenticated()">
+      <a routerLink="/chatgpt" routerLinkActive="active">Responses</a>
+    </li>
+    <li *ngIf="!isAuthenticated()">
+      <a routerLink="/login" routerLinkActive="active">Sign in</a>
+    </li>
+    <li *ngIf="isAuthenticated()">
+      <a (click)="logout()">Logout</a>
+    </li>
+  </ul>
+  <div class="hamburger" (click)="toggleMenu()">
+    <span class="line"></span>
+    <span class="line"></span>
+    <span class="line"></span>
+  </div>
+</nav>
+<div class="menubar" [class.active]="menuActive">
+  <ul>
+    <li>
+      <a routerLink="/form" (click)="toggleMenu()" routerLinkActive="active">Form</a>
+    </li>
+    <li *ngIf="isAuthenticated()">
+      <a routerLink="/categories" (click)="toggleMenu()" routerLinkActive="active">Categories</a>
+    </li>
+    <li *ngIf="isAuthenticated()">
+      <a routerLink="/questions" (click)="toggleMenu()" routerLinkActive="active">Questions</a>
+    </li>
+    <li *ngIf="isAuthenticated()">
+      <a routerLink="/alternatives" (click)="toggleMenu()" routerLinkActive="active">Alternatives</a>
+    </li>
+    <li *ngIf="isAuthenticated()">
+      <a routerLink="/chatgpt" (click)="toggleMenu()" routerLinkActive="active">Responses</a>
+    </li>
+    <li *ngIf="!isAuthenticated()">
+      <a routerLink="/login" (click)="toggleMenu()" routerLinkActive="active">Login</a>
+    </li>
+    <li *ngIf="isAuthenticated()">
+      <a (click)="logout()">Logout</a>
+    </li>
+  </ul>
+</div>
