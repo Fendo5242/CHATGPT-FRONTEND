@@ -3,6 +3,7 @@ import { FormComponent } from './form-component/form-component.component';
 import { CategoryComponent } from './crud/category/category.component';
 import { QuestionComponent } from './crud/question/question.component';
 import { AlternativeComponent } from './crud/alternative/alternative.component';
+import { Alternativev2Component } from './crud/alternativev2/alternativev2.component';
 import { ChatGptResponsesComponent } from './crud/chat-gpt-responses/chat-gpt-responses.component';
 import { LoginComponent } from './login/login.component';
 import { navbarGuard } from './navbar.guard';

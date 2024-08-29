@@ -18,7 +18,6 @@ interface Answer {
   textEn?: string; // Texto de la alternativa en inglés, opcional
 }
 
-
 @Component({
   selector: 'app-form-component',
   standalone: true,
@@ -45,7 +44,7 @@ export class FormComponent implements OnInit {
   showResponse: boolean = false;
   isCategorySelected: boolean = false;
   formattedChatGptResponse: string | null = null;
-
+  categoryPrompt: string = '';
   constructor(private questionService: QuestionService) { }
 
   ngOnInit(): void {
@@ -73,9 +72,12 @@ export class FormComponent implements OnInit {
     
     if (!isNaN(categoryId)) {
       this.getQuestionsByCategory(categoryId);
-      this.selectedCategoryName = this.categories.find(category => category.categoryID === categoryId)?.nameEn || '';
+      const category = this.categories.find(category => category.categoryID === categoryId);
+      this.selectedCategoryName = category?.nameEn || '';
+      this.categoryPrompt = category?.prompt || ''; // Obtén el prompt de la categoría
       this.isCategorySelected = true;
       console.log('Nombre de la categoría seleccionada:', this.selectedCategoryName);
+      console.log('Prompt de la categoría seleccionada:', this.categoryPrompt);
     }
   }
 
@@ -193,67 +195,87 @@ export class FormComponent implements OnInit {
     this.isLoading = true;
     this.showResponse = false;
     console.log('Enviando formulario...');
-
+  
     // Mapeo de las respuestas
     const userResponses = this.questions.map(question => {
-        const answer = this.answers[question.questionID]; // Usa la respuesta guardada
-
-        // Solo incluir preguntas que tienen una respuesta o que el usuario ha ingresado texto
-        if (answer) {
-            if (question.questionTypeID === 1 || question.questionTypeID === 3) {
-                // Si la pregunta es de tipo 1 o 3, usa los campos específicos de la base de datos
-                return {
-                    questionText: question.textEn,
-                    selectedAnswer: answer.textEn || null, // Usa textEn en vez de ID
-                    translationChatGpt: answer.translationChatGptEn || null // Usa la traducción si está disponible
-                };
-            } else if (question.questionTypeID === 2) {
-                // Si la pregunta es de tipo 2, guarda el valor de translationChatGpt en selectedAnswer
-                return {
-                    questionText: question.textEn,
-                    selectedAnswer: answer.translationChatGptEn || null, // Usa translationChatGptEn también como selectedAnswer
-                    translationChatGpt: answer.translationChatGptEn || null // Usa la traducción si está disponible
-                };
-            } else {
-                // Para otros tipos de preguntas, manejar como antes
-                const selectedAlternative = question.alternatives.find((alt: Alternative) => alt.alternativeID === answer.selectedAnswerId);
-
-                return {
-                    questionText: question.textEn,
-                    selectedAnswer: selectedAlternative ? selectedAlternative.textEn : null, // Usa textEn en vez de ID
-                    translationChatGpt: answer.translationChatGptEn || null // Usa la traducción si está disponible
-                };
-            }
+      const answer = this.answers[question.questionID]; // Usa la respuesta guardada
+  
+      if (question.questionTypeID === 1 || question.questionTypeID === 3) {
+        let selectedAnswer = answer ? answer.textEn : '';
+        let translationChatGpt = answer ? answer.translationChatGptEn : '';
+  
+        if (question.questionTypeID === 3 && !selectedAnswer) {
+          // Busca la alternativa con el texto "No"
+          const noAlternative = question.alternatives.find((alt: Alternative) => alt.textEn === 'No');
+          if (noAlternative) {
+            selectedAnswer = 'No';
+            translationChatGpt = noAlternative.translationChatGptEn;
+          } else {
+            selectedAnswer = 'No';
+            translationChatGpt = '';
+          }
         }
-        return null; // Devuelve null si no hay respuesta para esa pregunta
+  
+        return {
+          questionText: question.textEn,
+          selectedAnswer: selectedAnswer,
+          translationChatGpt: translationChatGpt
+        };
+      } else if (question.questionTypeID === 2) {
+        // Si la pregunta es de tipo 2, guarda el valor de translationChatGpt en selectedAnswer
+        return {
+          questionText: question.textEn,
+          selectedAnswer: answer ? answer.translationChatGptEn : '',
+          translationChatGpt: answer ? answer.translationChatGptEn : ''
+        };
+      } else if (question.questionTypeID === 4) {
+        let selectedAnswer = answer ? answer.textEn : '3'; // Por defecto, selectedAnswer es '3'
+        let translationChatGpt = answer ? answer.translationChatGptEn : 'On a range from 1 through 5, 1 being the short and 5 being long, the length should be a 3';
+  
+        return {
+          questionText: question.textEn,
+          selectedAnswer: selectedAnswer,
+          translationChatGpt: translationChatGpt
+        };
+      } else {
+        // Para otros tipos de preguntas, manejar como antes
+        const selectedAlternative = question.alternatives.find((alt: Alternative) => alt.alternativeID === (answer ? answer.selectedAnswerId : null));
+  
+        return {
+          questionText: question.textEn,
+          selectedAnswer: selectedAlternative ? selectedAlternative.textEn : null,
+          translationChatGpt: answer ? answer.translationChatGptEn : null
+        };
+      }
     }).filter(response => response !== null); // Filtra las preguntas sin respuesta
-
+  
     this.requestPayload = {
-        userID: this.userId,
-        categoryName: this.selectedCategoryName,
-        questions: userResponses // Solo incluye preguntas que tienen respuestas
+      userID: this.userId,
+      categoryName: this.selectedCategoryName,
+      categoryPrompt: this.categoryPrompt,
+      questions: userResponses // Solo incluye preguntas que tienen respuestas
     };
-
+  
     console.log('Payload de solicitud:', JSON.stringify(this.requestPayload, null, 2));
-
+  
     // Procesar la solicitud
     this.questionService.processUserResponses(this.requestPayload).subscribe(
-        response => {
-            this.chatGptResponse = response.response;
-            this.isLoading = false;
-            this.showResponse = true;
-            console.log('Respuesta de ChatGPT:', this.chatGptResponse);
-            
-            this.getResponseById(response.responseID);
-            this.getLastResponse();
-            this.scrollToResponse();
-        },
-        error => {
-            console.error('Error al procesar las respuestas del usuario', error);
-            this.isLoading = false;
-        }
+      response => {
+        this.chatGptResponse = response.response;
+        this.isLoading = false;
+        this.showResponse = true;
+        console.log('Respuesta de ChatGPT:', this.chatGptResponse);
+        
+        this.getResponseById(response.responseID);
+        this.getLastResponse();
+        this.scrollToResponse();
+      },
+      error => {
+        console.error('Error al procesar las respuestas del usuario', error);
+        this.isLoading = false;
+      }
     );
-}
+  }
   
   getResponseById(id: number): void {
     console.log('Obteniendo respuesta por ID:', id);
@@ -287,9 +309,9 @@ export class FormComponent implements OnInit {
     this.questionService.getLastRequest().subscribe(
       response => {
         console.log('Respuesta de última solicitud recibida:', response);
-        this.lastRequest = response.request;
+        this.lastRequest = this.formatRequest(response.request); // Formatear la solicitud
         this.editedRequest = this.lastRequest || '';
-        console.log('Última solicitud:', this.lastRequest); // Imprime la última solicitud
+        console.log('Última solicitud:', this.lastRequest); // Imprime la última solicitud formateada
       },
       error => {
         console.error('Error al obtener la última solicitud', error);
@@ -297,6 +319,20 @@ export class FormComponent implements OnInit {
     );
   }
   
+  // Función para formatear la solicitud eliminando líneas con ' . '
+  private formatRequest(request: string): string {
+    if (!request) return '';
+  
+    // Divide el texto en líneas y filtra las que no contengan ' . ' sin texto antes o después
+    const formattedRequest = request
+      .split('\n')
+      .filter(line => !/^\s*\.\s*$/.test(line)) // Elimina líneas que consisten en un punto sin texto antes o después
+      .join('\n');
+  
+    return formattedRequest;
+  }
+  
+
   getLastResponse(): void {
     console.log('Obteniendo última respuesta...');
     this.questionService.getLastResponse().subscribe(

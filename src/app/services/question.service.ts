@@ -6,8 +6,8 @@ import { Observable, forkJoin } from 'rxjs';
   providedIn: 'root'
 })
 export class QuestionService {
-  //private baseUrl = 'https://localhost:7071'; 
-  private baseUrl = 'https://chatgpt-api20240720143212.azurewebsites.net/'; 
+  private baseUrl = 'https://localhost:7071';
+  //private baseUrl = 'https://chatgpt-api20240720143212.azurewebsites.net/'; 
   private apiUrl = `${this.baseUrl}/Categories`;
   private userResponseUrl = `${this.baseUrl}/UserResponse`;
   private questionUrl = `${this.baseUrl}/Questions`;
@@ -15,6 +15,7 @@ export class QuestionService {
   private alternativeUrl = `${this.baseUrl}/Alternatives`;
   private chatGptUrl = `${this.baseUrl}/ChatGpt`;
   private userUrl = `${this.baseUrl}/Users`;
+
 
   constructor(private http: HttpClient) { }
 
@@ -74,7 +75,7 @@ export class QuestionService {
     return this.http.get<any[]>(this.alternativeUrl);
   }
 
-  getAlternative(id: number): Observable<any> { // Agregado aquí
+  getAlternative(id: number): Observable<any> {
     return this.http.get<any>(`${this.alternativeUrl}/${id}`);
   }
 
@@ -89,6 +90,13 @@ export class QuestionService {
   deleteAlternative(id: number): Observable<any> {
     return this.http.delete<any>(`${this.alternativeUrl}/${id}`);
   }
+
+  // Método para filtrar alternativas
+  filterAlternatives(filters: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/filter`, filters);
+  }
+
+
 
   // ===========================
   //    USER RESPONSES
@@ -121,18 +129,17 @@ export class QuestionService {
   }
 
   getLastRequest(): Observable<any> {
-    return this.http.get<any>(`${this.chatGptUrl}/GetLatestRequest`); // Cambiado a GetLatestRequest sin userId
+    return this.http.get<any>(`${this.chatGptUrl}/GetLatestRequest`);
   }
-  
+
   getLastResponse(): Observable<any> {
-    return this.http.get<any>(`${this.chatGptUrl}/GetLatestResponse`); // Cambiado a GetLatestResponse sin userId
+    return this.http.get<any>(`${this.chatGptUrl}/GetLatestResponse`);
   }
-  
+
   requestAndSaveResponse(requestModel: any): Observable<any> {
     return this.http.post<any>(`${this.chatGptUrl}/RequestAndSaveResponse`, requestModel);
   }
 
-  
   // ===========================
   //        USERS
   // ===========================
@@ -144,4 +151,5 @@ export class QuestionService {
     return this.http.post<any>(`${this.userUrl}/Login`, loginRequest);
   }
 }
+
 

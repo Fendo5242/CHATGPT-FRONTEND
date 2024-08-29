@@ -25,6 +25,7 @@
           <th scope="col">ID</th>
           <th scope="col">Name (English)</th>
           <th scope="col">Name (Spanish)</th>
+          <th scope="col">Prompt</th>
           <th scope="col">Edit</th>
           <th scope="col">Delete</th>
         </tr>
@@ -34,6 +35,7 @@
           <th scope="row">{{ category.categoryID }}</th>
           <td>{{ category.nameEn }}</td>
           <td>{{ category.nameEs }}</td>
+          <td>{{ category.prompt }}</td>
           <td>
             <button (click)="editCategory(category)" class="btn btn-warning">Edit</button>
           </td>
@@ -57,6 +59,10 @@
         <div class="form-group">
           <label for="editCategoryNameEs">Name (Spanish)</label>
           <input type="text" class="form-control" id="editCategoryNameEs" [(ngModel)]="selectedCategory.nameEs" name="editNameEs" required>
+        </div>
+        <div class="form-group">
+          <label for="editCategoryPrompt">Prompt</label>
+          <input type="text" class="form-control" id="editCategoryPrompt" [(ngModel)]="selectedCategory.prompt" name="editPrompt" required>
         </div>
         <div class="button-group">
           <button type="submit" class="btn btn-primary">Save Changes</button>

@@ -1,7 +1,10 @@
 {
-  "/": {
-    "target": "https://chatgpt-api20240720143212.azurewebsites.net/",
-    "secure": true,
-    "changeOrigin": true
+  "/api": {
+    "target": "https://localhost:7071",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/api": ""
+    }
   }
 }
