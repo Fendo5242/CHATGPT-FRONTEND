@@ -7,7 +7,7 @@ import { Observable, forkJoin } from 'rxjs';
 })
 export class QuestionService {
   //private baseUrl = 'https://localhost:7071';
-  private baseUrl = 'http://www.apichatgpt.somee.com'; 
+  private baseUrl = 'https://chatgpt-api20240830105051.azurewebsites.net'; 
   private apiUrl = `${this.baseUrl}/Categories`;
   private userResponseUrl = `${this.baseUrl}/UserResponse`;
   private questionUrl = `${this.baseUrl}/Questions`;
