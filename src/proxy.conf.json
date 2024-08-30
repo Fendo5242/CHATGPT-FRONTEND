@@ -1,10 +1,7 @@
 {
-  "/api": {
-    "target": "https://localhost:7071",
-    "secure": false,
-    "changeOrigin": true,
-    "pathRewrite": {
-      "^/api": ""
-    }
+  "/": {
+    "target": "http://www.apichatgpt.somee.com/",
+    "secure": true,
+    "changeOrigin": true
   }
 }
