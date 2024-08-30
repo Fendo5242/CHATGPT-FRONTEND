@@ -1,6 +1,6 @@
 {
   "/": {
-    "target": "http://www.apichatgpt.somee.com/",
+    "target": "https://www.apichatgpt.somee.com/",
     "secure": true,
     "changeOrigin": true
   }
