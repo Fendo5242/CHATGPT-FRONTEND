@@ -8,7 +8,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 })
 export class AuthService {
   //private apiUrl = 'https://localhost:7071'; // URL de la API local
-  private apiUrl = 'https://chatgpt-api20240830105051.azurewebsites.net'; // URL de la API en la nube
+  private apiUrl = 'http://hugotorrico-002-site3.ltempurl.com'; // URL de la API en la nube
   private tokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
   public token$: Observable<string | null> = this.tokenSubject.asObservable();
 

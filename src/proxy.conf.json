@@ -1,7 +1,7 @@
 {
   "/": {
-    "target": "https://chatgpt-api20240830105051.azurewebsites.net/",
-    "secure": true,
+    "target": "http://hugotorrico-002-site3.ltempurl.com",
+    "secure": false,
     "changeOrigin": true
   }
 }

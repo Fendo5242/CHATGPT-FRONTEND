@@ -12,7 +12,7 @@ import { QuestionService } from '../../services/question.service';
 })
 export class CategoryComponent implements OnInit {
   categories: any[] = [];
-  newCategory = { nameEn: '', nameEs: '' };
+  newCategory = { nameEn: '', nameEs: '', prompt: '' };
   selectedCategory: any = null;
   categoryToDelete: any = null; // Nueva propiedad para manejar la categoría a eliminar
   alertMessage: string = ''; // Nueva propiedad para el mensaje de alerta
@@ -33,7 +33,7 @@ export class CategoryComponent implements OnInit {
     if (form.valid) {
       this.questionService.createCategory(this.newCategory).subscribe(() => {
         this.getCategories();
-        this.newCategory = { nameEn: '', nameEs: '' };
+        this.newCategory = { nameEn: '', nameEs: '', prompt: '' };
         form.resetForm();
         this.showAlert('Category added successfully!'); // Mostrar notificación de éxito
       });

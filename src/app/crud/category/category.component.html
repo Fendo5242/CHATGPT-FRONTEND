@@ -13,6 +13,10 @@
         <label for="categoryNameEs">Name (Spanish)</label>
         <input type="text" class="form-control" id="categoryNameEs" [(ngModel)]="newCategory.nameEs" name="nameEs" required>
       </div>
+      <div class="form-group">
+        <label for="categoryPrompt">Prompt</label>
+        <input type="text" class="form-control" id="categoryPrompt" [(ngModel)]="newCategory.prompt" name="prompt" required>
+      </div>
       <button type="submit" class="btn btn-primary">Submit</button>
     </form>
   </div>
