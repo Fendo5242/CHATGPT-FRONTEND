@@ -13,17 +13,21 @@
       </div>
       <div class="form-group">
         <label for="questionTypeID">Question Type</label>
-        <select class="form-control" id="questionTypeID" [(ngModel)]="newQuestion.questionTypeID" name="questionTypeID" required>
-          <option *ngFor="let questionType of questionTypes" [value]="questionType.questionTypeID">{{ questionType.typeEn }}</option>
+        <select class="form-control" id="questionTypeID" [(ngModel)]="newQuestion.questionTypeID" name="questionTypeID"
+          required>
+          <option *ngFor="let questionType of questionTypes" [value]="questionType.questionTypeID">{{
+            questionType.typeEn }}</option>
         </select>
       </div>
       <div class="form-group">
         <label for="questionTextEn">Text (English)</label>
-        <input type="text" class="form-control" id="questionTextEn" [(ngModel)]="newQuestion.textEn" name="questionTextEn" required>
+        <input type="text" class="form-control" id="questionTextEn" [(ngModel)]="newQuestion.textEn"
+          name="questionTextEn" required>
       </div>
       <div class="form-group">
         <label for="questionTextEs">Text (Spanish)</label>
-        <input type="text" class="form-control" id="questionTextEs" [(ngModel)]="newQuestion.textEs" name="questionTextEs" required>
+        <input type="text" class="form-control" id="questionTextEs" [(ngModel)]="newQuestion.textEs"
+          name="questionTextEs" required>
       </div>
 
       <button type="submit" class="btn btn-primary">Submit</button>
@@ -65,7 +69,7 @@
       </tbody>
     </table>
   </div>
-<br>
+  <br>
   <!-- Formulario de edición emergente para preguntas -->
   <div *ngIf="selectedQuestion" id="editQuestionModal" class="modal-backdrop">
     <div class="modal-content">
@@ -73,24 +77,29 @@
       <form #editQuestionForm="ngForm" (ngSubmit)="updateQuestion(editQuestionForm)">
         <div class="form-group">
           <label for="editQuestionCategoryID">Category</label>
-          <select class="form-control" id="editQuestionCategoryID" [(ngModel)]="selectedQuestion.categoryID" name="editCategoryID" required>
+          <select class="form-control" id="editQuestionCategoryID" [(ngModel)]="selectedQuestion.categoryID"
+            name="editCategoryID" required>
             <option *ngFor="let category of categories" [value]="category.categoryID">{{ category.nameEn }}</option>
           </select>
         </div>
         <div class="form-group">
           <label for="editQuestionTypeID">Question Type</label>
-          <select class="form-control" id="editQuestionTypeID" [(ngModel)]="selectedQuestion.questionTypeID" name="editQuestionTypeID" required>
-            <option *ngFor="let questionType of questionTypes" [value]="questionType.questionTypeID">{{ questionType.typeEn }}</option>
+          <select class="form-control" id="editQuestionTypeID" [(ngModel)]="selectedQuestion.questionTypeID"
+            name="editQuestionTypeID" required>
+            <option *ngFor="let questionType of questionTypes" [value]="questionType.questionTypeID">{{
+              questionType.typeEn }}</option>
           </select>
         </div>
         <div class="form-group">
           <label for="editQuestionTextEn">Text (English)</label>
-          <input type="text" class="form-control" id="editQuestionTextEn" [(ngModel)]="selectedQuestion.textEn" name="editTextEn" required>
+          <input type="text" class="form-control" id="editQuestionTextEn" [(ngModel)]="selectedQuestion.textEn"
+            name="editTextEn" required>
         </div>
         <div class="form-group">
           <label for="editQuestionTextEs">Text (Spanish)</label>
-          <input type="text" class="form-control" id="editQuestionTextEs" [(ngModel)]="selectedQuestion.textEs" name="editTextEs" required>
-        </div>    
+          <input type="text" class="form-control" id="editQuestionTextEs" [(ngModel)]="selectedQuestion.textEs"
+            name="editTextEs" required>
+        </div>
         <div class="button-group">
           <button type="submit" class="btn btn-primary">Save Changes</button>
           <button type="button" class="btn btn-secondary" (click)="cancelEdit()">Cancel</button>
@@ -99,9 +108,9 @@
     </div>
   </div>
 
-  <!-- Ventana emergente para alternativas -->
+<!-- Ventana emergente para alternativas -->
 <div *ngIf="selectedQuestionForAlternatives" id="alternativesModal" class="modal fade show d-block">
-  <div class="modal-dialog modal-dialog-centered" style="max-width: 1500px;"> <!-- Ajustar el ancho máximo -->
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 1500px;">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Alternatives for: {{selectedQuestionForAlternatives.textEn}}</h5>
@@ -116,12 +125,15 @@
               <span>{{alternative.textEn}} / {{alternative.textEs}}</span>
             </div>
             <div *ngIf="editingIndex === i" class="flex-grow-1">
-              <label>Text (English)</label>
-              <input type="text" class="form-control mb-2" [(ngModel)]="editingAlternative.textEn" placeholder="Text (English)">
-              <label>Text (Spanish)</label>
-              <input type="text" class="form-control mb-2" [(ngModel)]="editingAlternative.textEs" placeholder="Text (Spanish)">
+              <label *ngIf="selectedQuestionForAlternatives.questionTypeID !== 2">Text (English)</label>
+              <input *ngIf="selectedQuestionForAlternatives.questionTypeID !== 2" type="text" class="form-control mb-2" [(ngModel)]="editingAlternative.textEn" placeholder="Text (English)">
+              
+              <label *ngIf="selectedQuestionForAlternatives.questionTypeID !== 2">Text (Spanish)</label>
+              <input *ngIf="selectedQuestionForAlternatives.questionTypeID !== 2" type="text" class="form-control mb-2" [(ngModel)]="editingAlternative.textEs" placeholder="Text (Spanish)">
+              
               <label>Translation (ChatGPT) English</label>
               <input type="text" class="form-control mb-2" [(ngModel)]="editingAlternative.translationChatGptEn" placeholder="Translation (ChatGPT) English">
+              
               <label>Translation (ChatGPT) Spanish</label>
               <input type="text" class="form-control mb-2" [(ngModel)]="editingAlternative.translationChatGptEs" placeholder="Translation (ChatGPT) Spanish">
             </div>
@@ -141,31 +153,50 @@
             </div>
           </li>
         </ul>
+        
         <div *ngIf="alternatives.length === 0" class="alert alert-info" role="alert">
           No alternatives available for this question. Please fill out the form below to add a new alternative.
         </div>
-        
+
         <div class="mt-3">
-          <h5>Add New Alternative</h5>
-          <form #alternativeForm="ngForm" (ngSubmit)="addAlternative(alternativeForm)">
-            <div class="form-group">
-              <label for="newAlternativeTextEn">Text (English)</label>
-              <input type="text" class="form-control" id="newAlternativeTextEn" [(ngModel)]="newAlternative.textEn" name="newAlternativeTextEn" required>
+          <form #alternativeForm="ngForm" (ngSubmit)="addAlternative(alternativeForm)" 
+            *ngIf="selectedQuestionForAlternatives?.questionTypeID !== 2 || alternatives.length === 0">
+            <h5>Add New Alternative</h5>
+
+            <!-- Formulario para agregar alternativa -->
+            <div *ngIf="selectedQuestionForAlternatives?.questionTypeID !== 2">
+              <div class="form-group">
+                <label for="newAlternativeTextEn">Text (English)</label>
+                <input type="text" class="form-control" id="newAlternativeTextEn" [(ngModel)]="newAlternative.textEn"
+                  name="newAlternativeTextEn" required>
+              </div>
+              <div class="form-group">
+                <label for="newAlternativeTextEs">Text (Spanish)</label>
+                <input type="text" class="form-control" id="newAlternativeTextEs" [(ngModel)]="newAlternative.textEs"
+                  name="newAlternativeTextEs" required>
+              </div>
             </div>
-            <div class="form-group">
-              <label for="newAlternativeTextEs">Text (Spanish)</label>
-              <input type="text" class="form-control" id="newAlternativeTextEs" [(ngModel)]="newAlternative.textEs" name="newAlternativeTextEs" required>
-            </div>
+        
+            <!-- Campos de traducción siempre visibles -->
             <div class="form-group">
               <label for="newTranslationChatGptEn">Translation (ChatGPT) English</label>
-              <input type="text" class="form-control" id="newTranslationChatGptEn" [(ngModel)]="newAlternative.translationChatGptEn" name="newTranslationChatGptEn">
+              <input type="text" class="form-control" id="newTranslationChatGptEn"
+                [(ngModel)]="newAlternative.translationChatGptEn" name="newTranslationChatGptEn">
             </div>
             <div class="form-group">
               <label for="newTranslationChatGptEs">Translation (ChatGPT) Spanish</label>
-              <input type="text" class="form-control" id="newTranslationChatGptEs" [(ngModel)]="newAlternative.translationChatGptEs" name="newTranslationChatGptEs">
+              <input type="text" class="form-control" id="newTranslationChatGptEs"
+                [(ngModel)]="newAlternative.translationChatGptEs" name="newTranslationChatGptEs">
             </div>
+        
             <button type="submit" class="btn btn-primary">Add Alternative</button>
           </form>
+          
+          <!-- Mensaje para preguntas de tipo texto -->
+          <div *ngIf="selectedQuestionForAlternatives?.questionTypeID === 2 && alternatives.length >= 1" 
+               class="alert alert-warning">
+            Como esta pregunta es de tipo texto, puedes modificar el prompt que acompañara a la respuesta escrita por el usuario.
+          </div>
         </div>
       </div>
       <div class="modal-footer">
@@ -176,6 +207,7 @@
     </div>
   </div>
 </div>
+
 
 
   <!-- Ventana emergente para confirmar eliminación -->

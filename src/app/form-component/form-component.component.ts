@@ -34,12 +34,12 @@ export class FormComponent implements OnInit {
   chatGptResponse: string | null = null;
   requestPayload: any;
   responseDetails: any;
-  lastRequest: string | null = null;  
+  lastRequest: string | null = null;
   lastResponse: any;
   isModalOpen: boolean = false;
   editedRequest: string = '';
   editedResponse: string = '';
-  userInput: string = ''; 
+  userInput: string = '';
   isLoading: boolean = false;
   showResponse: boolean = false;
   isCategorySelected: boolean = false;
@@ -69,7 +69,7 @@ export class FormComponent implements OnInit {
     const selectElement = event.target as HTMLSelectElement;
     const categoryId = parseInt(selectElement.value, 10);
     console.log('Categoría seleccionada:', categoryId);
-    
+
     if (!isNaN(categoryId)) {
       this.getQuestionsByCategory(categoryId);
       const category = this.categories.find(category => category.categoryID === categoryId);
@@ -88,10 +88,10 @@ export class FormComponent implements OnInit {
         this.questions = questions.questions;
         this.answers = {};
         console.log('Preguntas recibidas:', this.questions);
-        
+
         this.questions.forEach(question => {
           console.log(`Pregunta ID: ${question.questionID}`, question);
-          
+
           question.alternatives.forEach((alternative: Alternative) => {
             console.log(`Alternativa ID: ${alternative.alternativeID}, Text: ${alternative.textEn}, Translation: ${alternative.translationChatGptEn}`);
           });
@@ -106,80 +106,85 @@ export class FormComponent implements OnInit {
   onAnswerChange(questionId: number, event: Event): void {
     const inputElement = event.target as HTMLInputElement;
     const value = inputElement.value;
-    
+
+    // Buscar la pregunta correspondiente
     const question = this.questions.find(q => q.questionID === questionId);
-    
+
     if (!question) {
       console.error('Pregunta no encontrada:', questionId);
       return;
     }
-    
-    // Verificar si es una pregunta de tipo input de texto
+
+    // Verificar si es una pregunta de tipo input de texto (Tipo 2)
     if (question.questionTypeID === 2) {
-      // Manejando el caso del input de texto
       console.log(`Texto ingresado para la pregunta ${questionId}:`, value);
-      
+
       this.answers[questionId] = {
         selectedAnswerId: value, // Usar el texto ingresado como selectedAnswerId
         translationChatGptEn: value // Copiar el texto ingresado en translationChatGptEn
       };
-    } 
-    // Verificar si es del tipo 4, igual que el caso del slider
-    else if (question.questionTypeID === 4) {
-      // Convertir el valor a un número
+
+      // Verificar si es del tipo slider (Tipo 4)
+    } else if (question.questionTypeID === 4) {
       const sliderValue = parseInt(value, 10);
-      const selectedAnswerId = question.alternatives[sliderValue - 1]?.alternativeID; // -1 para ajustar al índice de array
-    
+      const selectedAnswerId = question.alternatives[sliderValue - 1]?.alternativeID; // Ajustar índice del array
+
       if (!selectedAnswerId) {
         console.error('Alternativa no encontrada para el valor del slider:', sliderValue);
         return;
       }
-    
+
       console.log(`Respuesta cambiada para la pregunta ${questionId} mediante slider:`, selectedAnswerId);
-    
-      const previousAnswerId = this.answers[questionId]?.selectedAnswerId || null; 
+
+      const previousAnswerId = this.answers[questionId]?.selectedAnswerId || null;
       this.answers[questionId] = {
         selectedAnswerId: selectedAnswerId,
         translationChatGptEn: '' // Inicializar en vacío
       };
-    
+
       // Obtener detalles de la alternativa seleccionada
       this.getAlternativeById(selectedAnswerId, questionId);
-    
+
       if (previousAnswerId !== selectedAnswerId) {
         console.log(`Respuesta cambiada de: ${previousAnswerId} a ${selectedAnswerId}`);
       }
-    } 
-    // Manejando el caso de las preguntas de tipo 1 y 3
-    else if (question.questionTypeID === 1 || question.questionTypeID === 3) {
-      // Manejando el caso de una alternativa seleccionada
-      const selectedAnswerId = value.toString(); // O puedes utilizar el ID de alguna otra manera
-    
+
+      // Manejar el caso de preguntas de tipo selección simple o de "yes or no" (Tipo 1 y 3)
+    } else if (question.questionTypeID === 1 || question.questionTypeID === 3) {
+      const selectedAnswerId = value.toString(); // Tomar el valor de la respuesta seleccionada
+
       console.log(`Respuesta cambiada para la pregunta ${questionId} mediante alternativa seleccionada:`, selectedAnswerId);
-    
+
       const previousAnswerId = this.answers[questionId]?.selectedAnswerId || null;
       this.answers[questionId] = {
         selectedAnswerId: selectedAnswerId,
         translationChatGptEn: '', // Inicializar en vacío
         textEn: '' // Inicializar en vacío
       };
-    
+
       // Obtener detalles de la alternativa seleccionada
       this.getAlternativeById(selectedAnswerId, questionId);
-    
+
       if (previousAnswerId !== selectedAnswerId) {
         console.log(`Respuesta cambiada de: ${previousAnswerId} a ${selectedAnswerId}`);
       }
+
+      // Para las preguntas tipo "yes or no", si no hay selección, asignar "No" como valor predeterminado
+      if (question.questionTypeID === 3 && !selectedAnswerId) {
+        this.answers[questionId].selectedAnswerId = 'No';
+      }
     }
+
     console.log('Respuestas actuales:', this.answers);
   }
-  
-  
+
+
+
   getAlternativeById(alternativeId: string, questionId: number): void {
     this.questionService.getAlternative(parseInt(alternativeId)).subscribe(
       (alternative: Alternative) => {
         console.log(`Alternativa ID = ${alternativeId}, textEn = "${alternative.textEn}", translationChatGptEn = "${alternative.translationChatGptEn}"`);
-        
+
         // Actualiza la respuesta con los valores obtenidos
         this.answers[questionId].textEn = alternative.textEn;
         this.answers[questionId].translationChatGptEn = alternative.translationChatGptEn;
@@ -195,17 +200,18 @@ export class FormComponent implements OnInit {
     this.isLoading = true;
     this.showResponse = false;
     console.log('Enviando formulario...');
-  
-    // Mapeo de las respuestas
+
+    // Mapeo de las respuestas del usuario
     const userResponses = this.questions.map(question => {
-      const answer = this.answers[question.questionID]; // Usa la respuesta guardada
-  
+      const answer = this.answers[question.questionID]; // Obtiene la respuesta guardada para la pregunta actual
+
+      // Manejo de preguntas de tipo 1 y 3 (selección simple o "yes or no")
       if (question.questionTypeID === 1 || question.questionTypeID === 3) {
-        let selectedAnswer = answer ? answer.textEn : '';
+        let selectedAnswer = answer ? answer.textEn : ''; // Asigna el texto de la respuesta si existe
         let translationChatGpt = answer ? answer.translationChatGptEn : '';
-  
+
+        // Para preguntas de tipo "yes or no" (tipo 3), si no se seleccionó nada, asignar 'No'
         if (question.questionTypeID === 3 && !selectedAnswer) {
-          // Busca la alternativa con el texto "No"
           const noAlternative = question.alternatives.find((alt: Alternative) => alt.textEn === 'No');
           if (noAlternative) {
             selectedAnswer = 'No';
@@ -215,57 +221,73 @@ export class FormComponent implements OnInit {
             translationChatGpt = '';
           }
         }
-  
+
         return {
           questionText: question.textEn,
           selectedAnswer: selectedAnswer,
           translationChatGpt: translationChatGpt
         };
+
+        // Manejo de preguntas de tipo 2 (input de texto)
       } else if (question.questionTypeID === 2) {
-        // Si la pregunta es de tipo 2, guarda el valor de translationChatGpt en selectedAnswer
+        // Obtener la primera alternativa que exista
+        const defaultAlternative = question.alternatives.length > 0 ? question.alternatives[0] : null;
+    
+        // Usa el valor de TextEn de la primera alternativa como translationChatGpt
+        let translationChatGpt = defaultAlternative ? defaultAlternative.translationChatGptEn : '';
+    
+        // Reemplaza {respuesta} en translationChatGpt con el valor de selectedAnswer
+        const selectedAnswer: string = answer ? answer.selectedAnswerId : ''; // Usa el texto ingresado como selectedAnswer
+        translationChatGpt = translationChatGpt.replace('{respuesta}', selectedAnswer); // Reemplazo
+    
         return {
-          questionText: question.textEn,
-          selectedAnswer: answer ? answer.translationChatGptEn : '',
-          translationChatGpt: answer ? answer.translationChatGptEn : ''
+            questionText: question.textEn,
+            selectedAnswer: selectedAnswer, // Usa el texto ingresado como selectedAnswer
+            translationChatGpt: translationChatGpt // Usa el texto modificado de translationChatGpt
         };
+
+        // Manejo de preguntas de tipo 4 (slider)
       } else if (question.questionTypeID === 4) {
-        let selectedAnswer = answer ? answer.textEn : '3'; // Por defecto, selectedAnswer es '3'
-        let translationChatGpt = answer ? answer.translationChatGptEn : 'On a range from 1 through 5, 1 being the short and 5 being long, the length should be a 3';
-  
+        let selectedAnswer = answer ? answer.textEn : '3'; // Si no hay respuesta, el valor predeterminado es '3'
+        let translationChatGpt = answer ? answer.translationChatGptEn : 'On a range from 1 through 5, 1 being the shortest and 5 being the longest, the length should be a 3';
+
         return {
           questionText: question.textEn,
           selectedAnswer: selectedAnswer,
           translationChatGpt: translationChatGpt
         };
+
+        // Manejo de otros tipos de preguntas
       } else {
-        // Para otros tipos de preguntas, manejar como antes
         const selectedAlternative = question.alternatives.find((alt: Alternative) => alt.alternativeID === (answer ? answer.selectedAnswerId : null));
-  
+
         return {
           questionText: question.textEn,
-          selectedAnswer: selectedAlternative ? selectedAlternative.textEn : null,
+          selectedAnswer: selectedAlternative ? selectedAlternative.textEn : null, // Si no hay alternativa seleccionada, devuelve null
           translationChatGpt: answer ? answer.translationChatGptEn : null
         };
       }
     }).filter(response => response !== null); // Filtra las preguntas sin respuesta
-  
+
+    // Creación del payload de solicitud
     this.requestPayload = {
       userID: this.userId,
       categoryName: this.selectedCategoryName,
       categoryPrompt: this.categoryPrompt,
-      questions: userResponses // Solo incluye preguntas que tienen respuestas
+      questions: userResponses // Solo incluye las preguntas con respuestas
     };
-  
+
     console.log('Payload de solicitud:', JSON.stringify(this.requestPayload, null, 2));
-  
-    // Procesar la solicitud
+
+    // Envío de las respuestas del usuario a través del servicio
     this.questionService.processUserResponses(this.requestPayload).subscribe(
       response => {
         this.chatGptResponse = response.response;
         this.isLoading = false;
         this.showResponse = true;
         console.log('Respuesta de ChatGPT:', this.chatGptResponse);
-        
+
+        // Acciones posteriores al obtener la respuesta
         this.getResponseById(response.responseID);
         this.getLastResponse();
         this.scrollToResponse();
@@ -276,7 +298,9 @@ export class FormComponent implements OnInit {
       }
     );
   }
-  
+
+
+
   getResponseById(id: number): void {
     console.log('Obteniendo respuesta por ID:', id);
     this.questionService.getResponseById(id).subscribe(
@@ -303,7 +327,7 @@ export class FormComponent implements OnInit {
   closeModal(): void {
     this.isModalOpen = false;
   }
-  
+
   getLastRequest(): void {
     console.log('Obteniendo última solicitud...');
     this.questionService.getLastRequest().subscribe(
@@ -318,20 +342,20 @@ export class FormComponent implements OnInit {
       }
     );
   }
-  
+
   // Función para formatear la solicitud eliminando líneas con ' . '
   private formatRequest(request: string): string {
     if (!request) return '';
-  
+
     // Divide el texto en líneas y filtra las que no contengan ' . ' sin texto antes o después
     const formattedRequest = request
       .split('\n')
       .filter(line => !/^\s*\.\s*$/.test(line)) // Elimina líneas que consisten en un punto sin texto antes o después
       .join('\n');
-  
+
     return formattedRequest;
   }
-  
+
 
   getLastResponse(): void {
     console.log('Obteniendo última respuesta...');
@@ -347,57 +371,57 @@ export class FormComponent implements OnInit {
       }
     );
   }
-  
+
   openModal(): void {
     console.log('Abriendo modal...');
     this.getLastRequest(); // Llama sin parámetros
     this.getLastResponse(); // Llama sin parámetros
-  
+
     // Esperar a que se carguen las respuestas antes de mostrar el modal
     setTimeout(() => {
       this.editedRequest = this.lastRequest || '';
       this.editedResponse = this.lastResponse?.response || '';
       this.isModalOpen = true; // Establecer el modal abierto al final
     }, 1000);
-  }  
-  
-  
+  }
+
+
   canSubmit(): boolean {
     return this.isCategorySelected && this.questions.every(question => this.answers[question.questionID]?.selectedAnswerId !== undefined);
   }
 
   saveChanges(): void {
     const requestPayload = {
-        userID: 1, // Establecido en 1
-        categoryName: this.lastResponse?.categoryName || '', // Mantiene la misma categoría
-        request: this.editedRequest // El nuevo request del textarea
+      userID: 1, // Establecido en 1
+      categoryName: this.lastResponse?.categoryName || '', // Mantiene la misma categoría
+      request: this.editedRequest // El nuevo request del textarea
     };
 
     this.questionService.requestAndSaveResponse(requestPayload).subscribe(
-        response => {
-            console.log('Respuesta guardada correctamente:', response);
-            this.chatGptResponse = response.Response; // Actualiza la respuesta con la nueva
-            this.getNewChatGptResponse(); // Llama a un método para obtener la nueva respuesta de ChatGPT
-            this.closeModal(); // Cierra el modal después de guardar
-        },
-        error => {
-            console.error('Error al guardar la respuesta:', error);
-        }
+      response => {
+        console.log('Respuesta guardada correctamente:', response);
+        this.chatGptResponse = response.Response; // Actualiza la respuesta con la nueva
+        this.getNewChatGptResponse(); // Llama a un método para obtener la nueva respuesta de ChatGPT
+        this.closeModal(); // Cierra el modal después de guardar
+      },
+      error => {
+        console.error('Error al guardar la respuesta:', error);
+      }
     );
   }
 
   getNewChatGptResponse(): void {
     // Llama al servicio para obtener la respuesta más reciente
     this.questionService.getLastResponse().subscribe(
-        (response) => {
-            this.chatGptResponse = response.response; // Actualiza chatGptResponse
-            this.showResponse = true; // Asegúrate de que la respuesta se muestre
-        },
-        (error) => {
-            console.error('Error al obtener la nueva respuesta de ChatGPT', error);
-        }
+      (response) => {
+        this.chatGptResponse = response.response; // Actualiza chatGptResponse
+        this.showResponse = true; // Asegúrate de que la respuesta se muestre
+      },
+      (error) => {
+        console.error('Error al obtener la nueva respuesta de ChatGPT', error);
+      }
     );
-    
+
   }
 
 }
