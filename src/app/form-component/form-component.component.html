@@ -1,0 +1,130 @@
+<div class="content">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6 mr-auto">
+        <div class="mb-5">
+          <h3 class="text-white mb-4">Gozapy</h3>
+          <p class="text-white">Say hello to Gozapy, your go-to AI-powered tool that simplifies content creation, helping you craft professional content with ease and drive your business forward.
+          </p>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <h3 class="text-white h5 mb-3">Contact Us</h3>
+            <ul class="list-unstyled mb-5">
+              <li class="d-flex text-white mb-2">
+                <span class="mr-3"><span class="icon-map"></span></span> Geraldine Sheppard
+                Founder                
+              </li>
+              <li class="d-flex text-white mb-2">
+                <span class="mr-3"><span class="icon-phone"></span></span> gigi&#64;gozapy.com
+              </li>
+            </ul>
+          </div>
+          <div class="col-md-6">
+            <h3 class="text-white h5 mb-3">Borrar</h3>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="box">
+          <h3 class="heading">NEW CONTENT</h3>
+          <form class="mb-5" (submit)="onSubmit($event)" id="contactForm" name="contactForm">
+            <div class="form-group">
+              <label for="categorySelect" class="text">What content do you want to create?</label>
+              <select id="categorySelect" class="form-control" (change)="onCategoryChange($event)" required>
+                <option value="" disabled selected>--choose an option--</option>
+                <option *ngFor="let category of categories" [value]="category.categoryID">{{ category.nameEn }}</option>
+              </select>
+            </div>
+
+            <div class="form-group" *ngFor="let question of questions; let i = index">
+              <div>
+                <label [for]="'question-' + i" class="label">{{ question.textEn }}</label>
+                <ng-container [ngSwitch]="question.questionTypeID">
+                  <input *ngSwitchCase="2" type="text" class="form-control" id="formGroupExampleInput" placeholder="Example: Animal..." (input)="onAnswerChange(question.questionID, $event)">
+
+                  <select *ngSwitchCase="1" class="form-control" (change)="onAnswerChange(question.questionID, $event)">
+                    <option value="" disabled selected>--choose an option--</option>
+                    <option *ngFor="let alt of question.alternatives" [value]="alt.alternativeID">{{ alt.textEn }}</option>
+                  </select>
+
+                  <select *ngSwitchCase="3" class="form-control" (change)="onAnswerChange(question.questionID, $event)">
+                    <option value="" disabled selected>--choose an option--</option>
+                    <option *ngFor="let alt of question.alternatives" [value]="alt.alternativeID">{{ alt.textEn }}</option>
+                  </select>
+
+                  <ng-container *ngSwitchCase="4">
+                    <input type="range" class="form-control-range" min="1" max="5" step="1" value="3" (change)="onAnswerChange(question.questionID, $event)">
+                    <div class="range-labels">
+                      <span *ngFor="let alt of question.alternatives">{{ alt.textEn }}</span>
+                    </div>
+                  </ng-container>
+                </ng-container>
+              </div>
+            </div>
+
+            <div class="form-group" *ngIf="isCategorySelected">
+              <input type="submit" value="Send Message" class="btn btn-block btn-primary rounded-4 py-2 px-4">
+              <span class="submitting"></span>
+            </div>
+            
+          </form>
+          <div id="form-message-warning mt-4"></div>
+          <div id="form-message-success">
+            Your message was sent, thank you!
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="response-box" class="container response-box response-container">
+    <div *ngIf="isLoading" class="spinner-container">
+      <div class="spinner"></div>
+    </div>
+
+    <div *ngIf="showResponse">
+      <h3>Response:</h3>
+      <button class="edit-button" (click)="openModal()">Editar</button>
+      <p>{{ chatGptResponse }}</p>
+    </div>
+    
+    <div *ngIf="isModalOpen" id="responseModal" class="modal-backdrop" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 id="modalTitle" class="modal-title">Response Detail</h5>
+          <button type="button" class="close" (click)="closeModal()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h5>Request (you can modify to get better answers):</h5>
+          <textarea class="form-control mb-3 request-textarea" [(ngModel)]="editedRequest"></textarea>
+          <h5>Your response:</h5>
+          <textarea class="form-control response-textarea" [(ngModel)]="editedResponse" readonly></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()">Close</button>
+          <button type="button" class="btn btn-primary" (click)="saveChanges()">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

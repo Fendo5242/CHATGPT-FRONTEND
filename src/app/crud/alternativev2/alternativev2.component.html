@@ -1,0 +1,79 @@
+<br>
+<br>
+<div class="container">
+    <h2 class="text-center">Alternative Management</h2>
+    <div class="box">
+        <h3 class="heading">Create a New Alternative</h3>
+        <div class="form-row align-items-center">
+            <!-- Combobox de Categoría -->
+            <div class="form-group col-md-4">
+                <label for="categorySelect">Select Category:</label>
+                <select id="categorySelect" class="form-control" [(ngModel)]="selectedCategoryId" (change)="onCategoryChange()">
+                    <option value="" disabled selected>-- Choose an option --</option>
+                    <option *ngFor="let category of categories" [value]="category.categoryID">
+                        {{ category.nameEn }} / {{ category.nameEs }}
+                    </option>
+                </select>
+            </div>
+
+            <!-- Combobox de Pregunta -->
+            <div class="form-group col-md-4">
+                <label for="questionSelect">Select Question:</label>
+                <select id="questionSelect" class="form-control" [(ngModel)]="selectedQuestionId">
+                    <option value="" disabled selected>-- Choose an option --</option>
+                    <option *ngFor="let question of questions" [value]="question.questionID">
+                        {{ question.textEn }} / {{ question.textEs }}
+                    </option>
+                </select>
+            </div>
+
+            <!-- Campo de Texto -->
+            <div class="form-group col-md-4">
+                <label for="searchText">Search Text:</label>
+                <input id="searchText" type="text" class="form-control" [(ngModel)]="searchText" placeholder="Enter search text">
+            </div>
+        </div>
+
+        <!-- Botón para Filtrar -->
+        <div class="text-center">
+            <button class="btn btn-primary" (click)="filterAlternatives()">Filter</button>
+        </div>
+
+        <!-- Sección para mostrar alternativas filtradas -->
+        <div *ngIf="alternatives.length > 0" class="mt-4">
+            <h3 class="heading">Filtered Alternatives</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Question</th>
+                        <th scope="col">Text (English)</th>
+                        <th scope="col">Text (Spanish)</th>
+                        <th scope="col">Translation (ChatGPT) English</th>
+                        <th scope="col">Translation (ChatGPT) Spanish</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container *ngFor="let item of alternatives">
+                        <tr *ngFor="let alternative of item.alternatives">
+                            <th scope="row">{{ alternative.alternativeID }}</th>
+                            <td>{{ item.categoryName }}</td>
+                            <td>{{ item.questionText }}</td>
+                            <td>{{ alternative.textEn }}</td>
+                            <td>{{ alternative.textEs }}</td>
+                            <td>{{ alternative.translationChatGptEn }}</td>
+                            <td>{{ alternative.translationChatGptEs }}</td>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Mensaje cuando no hay alternativas -->
+        <div *ngIf="showNoAlternativesMessage" class="no-alternatives-message mt-4 text-center alert alert-warning">
+            There are no alternatives for this question
+        </div>
+    </div>
+</div>
+

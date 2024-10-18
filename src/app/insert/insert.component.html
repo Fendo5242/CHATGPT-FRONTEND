@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,700,900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+  <div class="content">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <h2 class="text-center">Category Management</h2>
+          <div class="box">
+            <h3 class="heading">Create a New Category</h3>
+            <form #categoryForm="ngForm" (ngSubmit)="addCategory(categoryForm)">
+              <div class="form-group">
+                <label for="categoryNameEn">Name (English)</label>
+                <input type="text" class="form-control" id="categoryNameEn" [(ngModel)]="newCategory.nameEn" name="nameEn" required>
+              </div>
+              <div class="form-group">
+                <label for="categoryNameEs">Name (Spanish)</label>
+                <input type="text" class="form-control" id="categoryNameEs" [(ngModel)]="newCategory.nameEs" name="nameEs" required>
+              </div>
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+          </div>
+          <br>
+          <div class="box">
+            <h3 class="heading">Category List</h3>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">ID</th>
+                  <th scope="col">Name (English)</th>
+                  <th scope="col">Name (Spanish)</th>
+                  <th scope="col">Editar</th>
+                  <th scope="col">Eliminar</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let category of categories">
+                  <th scope="row">{{ category.categoryID }}</th>
+                  <td>{{ category.nameEn }}</td>
+                  <td>{{ category.nameEs }}</td>
+                  <td>
+                    <button (click)="editCategory(category)" class="btn btn-warning">Edit</button>
+                  </td>
+                  <td>
+                    <button (click)="deleteCategory(category.categoryID)" class="btn btn-danger">Delete</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Formulario de edición emergente para categorías -->
+      <div *ngIf="selectedCategory" id="editCategoryModal" class="modal-backdrop">
+        <div class="modal-content">
+          <h3 class="heading">Edit Category</h3>
+          <form #editCategoryForm="ngForm" (ngSubmit)="updateCategory(editCategoryForm)">
+            <div class="form-group">
+              <label for="editCategoryNameEn">Name (English)</label>
+              <input type="text" class="form-control" id="editCategoryNameEn" [(ngModel)]="selectedCategory.nameEn" name="editNameEn" required>
+            </div>
+            <div class="form-group">
+              <label for="editCategoryNameEs">Name (Spanish)</label>
+              <input type="text" class="form-control" id="editCategoryNameEs" [(ngModel)]="selectedCategory.nameEs" name="editNameEs" required>
+            </div>
+            <div class="button-group">
+              <button type="submit" class="btn btn-primary">Save Changes</button>
+              <button type="button" class="btn btn-secondary" (click)="cancelEdit()">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Question Management -->
+      <div class="row mt-5">
+        <div class="col-lg-12">
+          <h2 class="text-center">Question Management</h2>
+          <div class="box">
+            <h3 class="heading">Create a New Question</h3>
+            <form #questionForm="ngForm" (ngSubmit)="addQuestion(questionForm)">
+              <div class="form-group">
+                <label for="categoryID">Category</label>
+                <select class="form-control" id="categoryID" [(ngModel)]="newQuestion.categoryID" name="categoryID" required>
+                  <option *ngFor="let category of categories" [value]="category.categoryID">{{ category.nameEn }}</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="questionTypeID">Question Type</label>
+                <select class="form-control" id="questionTypeID" [(ngModel)]="newQuestion.questionTypeID" name="questionTypeID" required>
+                  <option *ngFor="let questionType of questionTypes" [value]="questionType.questionTypeID">{{ questionType.typeEn }}</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="questionTextEn">Text (English)</label>
+                <input type="text" class="form-control" id="questionTextEn" [(ngModel)]="newQuestion.textEn" name="questionTextEn" required>
+              </div>
+              <div class="form-group">
+                <label for="questionTextEs">Text (Spanish)</label>
+                <input type="text" class="form-control" id="questionTextEs" [(ngModel)]="newQuestion.textEs" name="questionTextEs" required>
+              </div>
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+          </div>
+          <br>
+          <div class="box">
+            <h3 class="heading">Question List</h3>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">ID</th>
+                  <th scope="col">Category</th>
+                  <th scope="col">Type</th>
+                  <th scope="col">Text (English)</th>
+                  <th scope="col">Text (Spanish)</th>
+                  <th scope="col">Editar</th>
+                  <th scope="col">Eliminar</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let question of questions">
+                  <th scope="row">{{ question.questionID }}</th>
+                  <td>{{ question.categoryID }}</td>
+                  <td>{{ question.questionTypeID }}</td>
+                  <td>{{ question.textEn }}</td>
+                  <td>{{ question.textEs }}</td>
+                  <td>
+                    <button (click)="editQuestion(question)" class="btn btn-warning">Edit</button>
+                  </td>
+                  <td>
+                    <button (click)="deleteQuestion(question.questionID)" class="btn btn-danger">Delete</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Formulario de edición emergente para preguntas -->
+      <div *ngIf="selectedQuestion" id="editQuestionModal" class="modal-backdrop">
+        <div class="modal-content">
+          <h3 class="heading">Edit Question</h3>
+          <form #editQuestionForm="ngForm" (ngSubmit)="updateQuestion(editQuestionForm)">
+            <div class="form-group">
+              <label for="editQuestionCategoryID">Category</label>
+              <select class="form-control" id="editQuestionCategoryID" [(ngModel)]="selectedQuestion.categoryID" name="editCategoryID" required>
+                <option *ngFor="let category of categories" [value]="category.categoryID">{{ category.nameEn }}</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="editQuestionTypeID">Question Type</label>
+              <select class="form-control" id="editQuestionTypeID" [(ngModel)]="selectedQuestion.questionTypeID" name="editQuestionTypeID" required>
+                <option *ngFor="let questionType of questionTypes" [value]="questionType.questionTypeID">{{ questionType.typeEn }}</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="editQuestionTextEn">Text (English)</label>
+              <input type="text" class="form-control" id="editQuestionTextEn" [(ngModel)]="selectedQuestion.textEn" name="editTextEn" required>
+            </div>
+            <div class="form-group">
+              <label for="editQuestionTextEs">Text (Spanish)</label>
+              <input type="text" class="form-control" id="editQuestionTextEs" [(ngModel)]="selectedQuestion.textEs" name="editTextEs" required>
+            </div>
+            <div class="button-group">
+              <button type="submit" class="btn btn-primary">Save Changes</button>
+              <button type="button" class="btn btn-secondary" (click)="cancelEdit()">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Alternative Management -->
+      <div class="row mt-5">
+        <div class="col-lg-12">
+          <h2 class="text-center">Alternative Management</h2>
+          <div class="box">
+            <h3 class="heading">Create a New Alternative</h3>
+            <form #alternativeForm="ngForm" (ngSubmit)="addAlternative(alternativeForm)">
+              <div class="form-group">
+                <label for="questionID">Question</label>
+                <select class="form-control" id="questionID" [(ngModel)]="newAlternative.questionID" name="questionID" required>
+                  <option *ngFor="let question of questions" [value]="question.questionID">{{ question.textEn }}</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="alternativeTextEn">Text (English)</label>
+                <input type="text" class="form-control" id="alternativeTextEn" [(ngModel)]="newAlternative.textEn" name="alternativeTextEn" required>
+              </div>
+              <div class="form-group">
+                <label for="alternativeTextEs">Text (Spanish)</label>
+                <input type="text" class="form-control" id="alternativeTextEs" [(ngModel)]="newAlternative.textEs" name="alternativeTextEs" required>
+              </div>
+              <div class="form-group">
+                <label for="translationChatGptEn">Translation (ChatGPT) English</label>
+                <input type="text" class="form-control" id="translationChatGptEn" [(ngModel)]="newAlternative.translationChatGptEn" name="translationChatGptEn">
+              </div>
+              <div class="form-group">
+                <label for="translationChatGptEs">Translation (ChatGPT) Spanish</label>
+                <input type="text" class="form-control" id="translationChatGptEs" [(ngModel)]="newAlternative.translationChatGptEs" name="translationChatGptEs">
+              </div>
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+          </div>
+          <br>
+          <div class="box">
+            <h3 class="heading">Alternative List</h3>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">ID</th>
+                  <th scope="col">Question</th>
+                  <th scope="col">Text (English)</th>
+                  <th scope="col">Text (Spanish)</th>
+                  <th scope="col">Translation (ChatGPT) English</th>
+                  <th scope="col">Translation (ChatGPT) Spanish</th>
+                  <th scope="col">Editar</th>
+                  <th scope="col">Eliminar</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let alternative of alternatives">
+                  <th scope="row">{{ alternative.alternativeID }}</th>
+                  <td>{{ alternative.questionID }}</td>
+                  <td>{{ alternative.textEn }}</td>
+                  <td>{{ alternative.textEs }}</td>
+                  <td>{{ alternative.translationChatGptEn }}</td>
+                  <td>{{ alternative.translationChatGptEs }}</td>
+                  <td>
+                    <button (click)="editAlternative(alternative)" class="btn btn-warning">Edit</button>
+                  </td>
+                  <td>
+                    <button (click)="deleteAlternative(alternative.alternativeID)" class="btn btn-danger">Delete</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Formulario de edición emergente para alternativas -->
+      <div *ngIf="selectedAlternative" id="editAlternativeModal" class="modal-backdrop">
+        <div class="modal-content">
+          <h3 class="heading">Edit Alternative</h3>
+          <form #editAlternativeForm="ngForm" (ngSubmit)="updateAlternative(editAlternativeForm)">
+            <div class="form-group">
+              <label for="editAlternativeQuestionID">Question</label>
+              <select class="form-control" id="editAlternativeQuestionID" [(ngModel)]="selectedAlternative.questionID" name="editQuestionID" required>
+                <option *ngFor="let question of questions" [value]="question.questionID">{{ question.textEn }}</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="editAlternativeTextEn">Text (English)</label>
+              <input type="text" class="form-control" id="editAlternativeTextEn" [(ngModel)]="selectedAlternative.textEn" name="editTextEn" required>
+            </div>
+            <div class="form-group">
+              <label for="editAlternativeTextEs">Text (Spanish)</label>
+              <input type="text" class="form-control" id="editAlternativeTextEs" [(ngModel)]="selectedAlternative.textEs" name="editTextEs" required>
+            </div>
+            <div class="form-group">
+              <label for="editTranslationChatGptEn">Translation (ChatGPT) English</label>
+              <input type="text" class="form-control" id="editTranslationChatGptEn" [(ngModel)]="selectedAlternative.translationChatGptEn" name="editTranslationChatGptEn">
+            </div>
+            <div class="form-group">
+              <label for="editTranslationChatGptEs">Translation (ChatGPT) Spanish</label>
+              <input type="text" class="form-control" id="editTranslationChatGptEs" [(ngModel)]="selectedAlternative.translationChatGptEs" name="editTranslationChatGptEs">
+            </div>
+            <div class="button-group">
+              <button type="submit" class="btn btn-primary">Save Changes</button>
+              <button type="button" class="btn btn-secondary" (click)="cancelEdit()">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

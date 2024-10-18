@@ -1,0 +1,7 @@
+{
+  "/": {
+    "target": "https://miwicprtraining.truenorth.pr/pruebaapi",
+    "secure": false,
+    "changeOrigin": true
+  }
+}

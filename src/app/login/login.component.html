@@ -1,0 +1,36 @@
+<body>
+    <div class="background">
+        <div class="container" id="container">
+            <div class="form-container sign-in-container">
+                <form (ngSubmit)="login()" #signInForm="ngForm">
+                    <h1>Sign in</h1>
+                    <input type="text" placeholder="Username" [(ngModel)]="signInData.username" name="username" required #signInUsername="ngModel" />
+                    <div *ngIf="signInUsername.invalid && (signInUsername.dirty || signInUsername.touched)" class="error-message">
+                        Username is required.
+                    </div>
+                    <input type="password" placeholder="Password" [(ngModel)]="signInData.password" name="password" required #signInPassword="ngModel" />
+                    <div *ngIf="signInPassword.invalid && (signInPassword.dirty || signInPassword.touched)" class="error-message">
+                        Password is required.
+                    </div>
+                    <br>
+                    <button type="submit" id="signIn" [disabled]="signInForm.invalid">Sign In</button>
+                    <a href="/form">or continue using the app without logging in</a>
+
+                </form>
+                <!-- Mensaje de error de inicio de sesión -->
+                <div *ngIf="loginFailed" class="error-message">
+                    Login failed. Please check your credentials.
+                </div>
+            </div>
+
+            <div class="overlay-container">
+                    <img src="https://lirp.cdn-website.com/20adca72/dms3rep/multi/opt/construccion+de+edificios+en+monterrey-960w.jpg">
+            </div>
+        </div>
+    </div>
+
+    <!-- Mensaje de notificación -->
+    <div *ngIf="notificationService.message$ | async as message" class="notification">
+        {{ message }}
+    </div>
+</body>

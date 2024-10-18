@@ -1,0 +1,49 @@
+<br>
+<br>
+<div class="container">
+    <h2 class="text-center">ChatGPT Responses</h2>
+    <div class="box">
+        <h3 class="heading">Responses List</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">View</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let response of responses">
+                    <td>{{ response.creationDate | date: 'short' }}</td>
+                    <td>{{ response.categoryName }}</td>
+                    <td>
+                        <button (click)="viewResponse(response)" class="btn btn-secondary">
+                            <i class="fa fa-eye"></i> View
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Ventana emergente para ver detalle de la respuesta -->
+    <div *ngIf="selectedResponse" id="responseModal" class="modal-backdrop">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Response Detail</h5>
+                <button type="button" class="close" (click)="closeModal()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h5>Request:</h5>
+                <pre class="pre-wrap">{{ selectedResponse?.request }}</pre>
+                <h5>Response:</h5>
+                <pre class="pre-wrap">{{ selectedResponse?.response }}</pre>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

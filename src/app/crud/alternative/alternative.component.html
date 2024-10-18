@@ -1,0 +1,149 @@
+<br>
+<br>
+<div class="container">
+  <h2 class="text-center">Alternative Management</h2>
+  <div class="box">
+    <h3 class="heading">Create a New Alternative</h3>
+    <form #alternativeForm="ngForm" (ngSubmit)="addAlternative(alternativeForm)">
+      <div class="form-group">
+        <label for="questionID">Question</label>
+        <select class="form-control" id="questionID" [(ngModel)]="newAlternative.questionID" name="questionID" required>
+          <option *ngFor="let question of questions" [value]="question.questionID">{{ question.textEn }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="alternativeTextEn">Text (English)</label>
+        <input type="text" class="form-control" id="alternativeTextEn" [(ngModel)]="newAlternative.textEn" name="alternativeTextEn" required>
+      </div>
+      <div class="form-group">
+        <label for="alternativeTextEs">Text (Spanish)</label>
+        <input type="text" class="form-control" id="alternativeTextEs" [(ngModel)]="newAlternative.textEs" name="alternativeTextEs" required>
+      </div>
+      <div class="form-group">
+        <label for="translationChatGptEn" class="d-flex justify-content-between align-items-center">
+          Translation (ChatGPT) English
+          <button type="button" class="btn btn-info" (click)="openHelp('translationChatGptEn')">?</button>
+        </label>
+        <div class="input-group">
+          <input type="text" class="form-control" id="translationChatGptEn" [(ngModel)]="newAlternative.translationChatGptEn" name="translationChatGptEn">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="translationChatGptEs" class="d-flex justify-content-between align-items-center">
+          Translation (ChatGPT) Spanish
+          <button type="button" class="btn btn-info" (click)="openHelp('translationChatGptEs')">?</button>
+        </label>
+        <div class="input-group">
+          <input type="text" class="form-control" id="translationChatGptEs" [(ngModel)]="newAlternative.translationChatGptEs" name="translationChatGptEs">
+        </div>
+      </div>
+      
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+  <br>
+  <div class="box">
+    <h3 class="heading">Alternative List</h3>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Question</th>
+          <th scope="col">Text (English)</th>
+          <th scope="col">Text (Spanish)</th>
+          <th scope="col">Translation (ChatGPT) English</th>
+          <th scope="col">Translation (ChatGPT) Spanish</th>
+          <th scope="col">Edit</th>
+          <th scope="col">Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let alternative of alternatives">
+          <th scope="row">{{ alternative.alternativeID }}</th>
+          <td>{{ getQuestionText(alternative.questionID) }}</td>
+          <td>{{ alternative.textEn }}</td>
+          <td>{{ alternative.textEs }}</td>
+          <td>{{ alternative.translationChatGptEn }}</td>
+          <td>{{ alternative.translationChatGptEs }}</td>
+          <td>
+            <button (click)="editAlternative(alternative)" class="btn btn-warning">Edit</button>
+          </td>
+          <td>
+            <button (click)="confirmDelete(alternative)" class="btn btn-danger">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Formulario de edición emergente para alternativas -->
+  <div *ngIf="selectedAlternative" id="editAlternativeModal" class="modal-backdrop">
+    <div class="modal-content">
+      <h3 class="heading">Edit Alternative</h3>
+      <form #editAlternativeForm="ngForm" (ngSubmit)="updateAlternative(editAlternativeForm)">
+        <div class="form-group">
+          <label for="editAlternativeQuestionID">Question</label>
+          <select class="form-control" id="editAlternativeQuestionID" [(ngModel)]="selectedAlternative.questionID" name="editQuestionID" required>
+            <option *ngFor="let question of questions" [value]="question.questionID">{{ question.textEn }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="editAlternativeTextEn">Text (English)</label>
+          <input type="text" class="form-control" id="editAlternativeTextEn" [(ngModel)]="selectedAlternative.textEn" name="editTextEn" required>
+        </div>
+        <div class="form-group">
+          <label for="editAlternativeTextEs">Text (Spanish)</label>
+          <input type="text" class="form-control" id="editAlternativeTextEs" [(ngModel)]="selectedAlternative.textEs" name="editTextEs" required>
+        </div>
+        <div class="form-group">
+          <label for="editTranslationChatGptEn">Translation (ChatGPT) English</label>
+          <input type="text" class="form-control" id="editTranslationChatGptEn" [(ngModel)]="selectedAlternative.translationChatGptEn" name="editTranslationChatGptEn">
+        </div>
+        <div class="form-group">
+          <label for="editTranslationChatGptEs">Translation (ChatGPT) Spanish</label>
+          <input type="text" class="form-control" id="editTranslationChatGptEs" [(ngModel)]="selectedAlternative.translationChatGptEs" name="editTranslationChatGptEs">
+        </div>
+        <div class="button-group">
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+          <button type="button" class="btn btn-secondary" (click)="cancelEdit()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<br>
+<!-- Ventana emergente para confirmar eliminación -->
+<div *ngIf="alternativeToDelete" class="modal-backdrop">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title">Confirm Delete</h5>
+      <button type="button" class="close" (click)="cancelDelete()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p>Are you sure you want to delete this alternative?</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="cancelDelete()">Cancel</button>
+      <button type="button" class="btn btn-danger" (click)="deleteAlternativeConfirmed()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- Ventana emergente de ayuda -->
+<div *ngIf="helpModalOpen" id="helpModal" class="modal-backdrop">
+  <div class="modal-content">
+    <h3 class="heading">{{ helpTitle }}</h3>
+    <p>{{ helpContent }}</p>
+    <div class="button-group">
+      <button type="button" class="btn btn-secondary" (click)="closeHelp()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Contenedor de notificación -->
+<div id="notification-container" class="notification" *ngIf="alertMessage">
+  {{ alertMessage }}
+</div>
+
