@@ -1,6 +1,6 @@
 {
-  "/": {
-    "target": "http://hugotorrico-002-site3.ltempurl.com",
+  "/api": {
+    "target": "https://localhost:7071",
     "secure": false,
     "changeOrigin": true
   }

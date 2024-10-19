@@ -1,58 +1,61 @@
 <nav class="navbar">
   <div class="logo">
-    <h1>CHATGPT POST V1.2</h1>
+    <h1>{{ selectedLanguage === 'en' ? 'CHATGPT POST V1.2' : 'CHATGPT POST V1.2' }}</h1>
   </div>
   <ul>
     <li>
-      <a routerLink="/form" routerLinkActive="active">Form</a>
+      <a routerLink="/form" routerLinkActive="active">
+        {{ selectedLanguage === 'en' ? 'Form' : 'Formulario' }}
+      </a>
     </li>
     <li *ngIf="isAuthenticated()">
-      <a routerLink="/categories" routerLinkActive="active">Categories</a>
+      <a routerLink="/categories" routerLinkActive="active">
+        {{ selectedLanguage === 'en' ? 'Categories' : 'Categorías' }}
+      </a>
     </li>
     <li *ngIf="isAuthenticated()">
-      <a routerLink="/questions" routerLinkActive="active">Questions</a>
+      <a routerLink="/questions" routerLinkActive="active">
+        {{ selectedLanguage === 'en' ? 'Questions' : 'Preguntas' }}
+      </a>
     </li>
     <li *ngIf="isAuthenticated()">
-      <a routerLink="/alternatives" routerLinkActive="active">Alternatives</a>
+      <a routerLink="/alternatives" routerLinkActive="active">
+        {{ selectedLanguage === 'en' ? 'Alternatives' : 'Alternativas' }}
+      </a>
     </li>
     <li *ngIf="isAuthenticated()">
-      <a routerLink="/chatgpt" routerLinkActive="active">Responses</a>
+      <a routerLink="/chatgpt" routerLinkActive="active">
+        {{ selectedLanguage === 'en' ? 'Responses' : 'Respuestas' }}
+      </a>
     </li>
     <li *ngIf="!isAuthenticated()">
-      <a routerLink="/login" routerLinkActive="active">Sign in</a>
+      <a routerLink="/login" routerLinkActive="active">
+        {{ selectedLanguage === 'en' ? 'Sign in' : 'Iniciar sesión' }}
+      </a>
     </li>
     <li *ngIf="isAuthenticated()">
-      <a (click)="logout()">Logout</a>
+      <a (click)="logout()">
+        {{ selectedLanguage === 'en' ? 'Logout' : 'Cerrar sesión' }}
+      </a>
+    </li>
+
+    <!-- Selector de Idiomas -->
+    <li class="options" (click)="toggleLanguagesPopup()">
+      <span class="config-icon">⚙️</span>
+      <div class="popup" *ngIf="showPopup">
+        <h4 class="title-lenguage">{{ selectedLanguage === 'en' ? 'Language' : 'Idioma' }}</h4>
+        <ul>
+          <li *ngFor="let language of languages" (click)="selectLanguage(language.languageName)" class="button">
+            {{ language.languageName }}
+          </li>
+        </ul>
+      </div>
     </li>
   </ul>
+
   <div class="hamburger" (click)="toggleMenu()">
     <span class="line"></span>
     <span class="line"></span>
     <span class="line"></span>
   </div>
 </nav>
-<div class="menubar" [class.active]="menuActive">
-  <ul>
-    <li>
-      <a routerLink="/form" (click)="toggleMenu()" routerLinkActive="active">Form</a>
-    </li>
-    <li *ngIf="isAuthenticated()">
-      <a routerLink="/categories" (click)="toggleMenu()" routerLinkActive="active">Categories</a>
-    </li>
-    <li *ngIf="isAuthenticated()">
-      <a routerLink="/questions" (click)="toggleMenu()" routerLinkActive="active">Questions</a>
-    </li>
-    <li *ngIf="isAuthenticated()">
-      <a routerLink="/alternatives" (click)="toggleMenu()" routerLinkActive="active">Alternatives</a>
-    </li>
-    <li *ngIf="isAuthenticated()">
-      <a routerLink="/chatgpt" (click)="toggleMenu()" routerLinkActive="active">Responses</a>
-    </li>
-    <li *ngIf="!isAuthenticated()">
-      <a routerLink="/login" (click)="toggleMenu()" routerLinkActive="active">Login</a>
-    </li>
-    <li *ngIf="isAuthenticated()">
-      <a (click)="logout()">Logout</a>
-    </li>
-  </ul>
-</div>

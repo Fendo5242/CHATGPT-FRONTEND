@@ -6,9 +6,10 @@ import { BehaviorSubject, Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
+
 export class AuthService {
-  //private apiUrl = 'https://localhost:7071'; // URL de la API local
-  private apiUrl = 'http://hugotorrico-002-site3.ltempurl.com'; // URL de la API en la nube
+  private apiUrl = 'https://localhost:7071'; // URL de la API local
+  //private apiUrl = 'http://hugotorrico-002-site3.ltempurl.com'; // URL de la API en la nube
   private tokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
   public token$: Observable<string | null> = this.tokenSubject.asObservable();
 

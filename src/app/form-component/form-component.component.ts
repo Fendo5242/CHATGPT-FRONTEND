@@ -2,20 +2,25 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { QuestionService } from '../services/question.service';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { LanguageService } from '../services/language.service';
 
 // Define la interfaz para las alternativas
 interface Alternative {
   alternativeID: string;
   translationChatGptEn: string;
+  translationChatGptEs: string;
   textEn: string; // Asegúrate de que este campo se incluye si lo necesitas
+  textEs: string; // Agregado para el texto en español
 }
 
 // Define la interfaz para las respuestas
 interface Answer {
   selectedAnswerId: string; // ID de la respuesta seleccionada o ' ' para texto
-  translationChatGptEn: string; // Traducción de ChatGPT
+  translationChatGptEn: string; // Traducción de ChatGPT en inglés
+  translationChatGptEs: string; // Traducción de ChatGPT en español
   userInputText?: string; // Texto del input, opcional
   textEn?: string; // Texto de la alternativa en inglés, opcional
+  textEs?: string; // Texto de la alternativa en español, opcional
 }
 
 @Component({
@@ -45,11 +50,18 @@ export class FormComponent implements OnInit {
   isCategorySelected: boolean = false;
   formattedChatGptResponse: string | null = null;
   categoryPrompt: string = '';
-  constructor(private questionService: QuestionService) { }
+  selectedLanguage: string = ''; // Declara la propiedad selectedLanguage
+
+  constructor(private questionService: QuestionService, private languageService: LanguageService) { }
 
   ngOnInit(): void {
     console.log('Componente inicializado');
     this.getCategories();
+  
+    // Suscribirse al observable del LanguageService para obtener el idioma actual
+    this.languageService.language$.subscribe(language => {
+      this.selectedLanguage = language; // Asignar el idioma seleccionado a la variable
+    });
   }
 
   getCategories(): void {
@@ -121,7 +133,8 @@ export class FormComponent implements OnInit {
 
       this.answers[questionId] = {
         selectedAnswerId: value, // Usar el texto ingresado como selectedAnswerId
-        translationChatGptEn: value // Copiar el texto ingresado en translationChatGptEn
+        translationChatGptEn: value, // Copiar el texto ingresado en translationChatGptEn
+        translationChatGptEs: value // Traducción de ChatGPT
       };
 
       // Verificar si es del tipo slider (Tipo 4)
@@ -139,7 +152,8 @@ export class FormComponent implements OnInit {
       const previousAnswerId = this.answers[questionId]?.selectedAnswerId || null;
       this.answers[questionId] = {
         selectedAnswerId: selectedAnswerId,
-        translationChatGptEn: '' // Inicializar en vacío
+        translationChatGptEn: '', // Inicializar en vacío
+        translationChatGptEs: '' // Inicializar en vacío
       };
 
       // Obtener detalles de la alternativa seleccionada
@@ -159,7 +173,9 @@ export class FormComponent implements OnInit {
       this.answers[questionId] = {
         selectedAnswerId: selectedAnswerId,
         translationChatGptEn: '', // Inicializar en vacío
-        textEn: '' // Inicializar en vacío
+        translationChatGptEs: '', // Inicializar en vacío
+        textEn: '', // Inicializar en vacío
+        textEs: '' // Inicializar en vacío
       };
 
       // Obtener detalles de la alternativa seleccionada
@@ -178,8 +194,6 @@ export class FormComponent implements OnInit {
     console.log('Respuestas actuales:', this.answers);
   }
 
-
-
   getAlternativeById(alternativeId: string, questionId: number): void {
     this.questionService.getAlternative(parseInt(alternativeId)).subscribe(
       (alternative: Alternative) => {
@@ -188,6 +202,8 @@ export class FormComponent implements OnInit {
         // Actualiza la respuesta con los valores obtenidos
         this.answers[questionId].textEn = alternative.textEn;
         this.answers[questionId].translationChatGptEn = alternative.translationChatGptEn;
+        this.answers[questionId].textEs = alternative.textEs;
+        this.answers[questionId ].translationChatGptEs = alternative.translationChatGptEs;
       },
       error => {
         console.error('Error al obtener la alternativa por ID:', error);
@@ -200,94 +216,99 @@ export class FormComponent implements OnInit {
     this.isLoading = true;
     this.showResponse = false;
     console.log('Enviando formulario...');
-
+  
     // Mapeo de las respuestas del usuario
     const userResponses = this.questions.map(question => {
-      const answer = this.answers[question.questionID]; // Obtiene la respuesta guardada para la pregunta actual
-
-      // Manejo de preguntas de tipo 1 y 3 (selección simple o "yes or no")
+      const answer = this.answers[question.questionID]; // Obtiene la respuesta para la pregunta
+      let selectedAnswer = ''; 
+      let translationChatGpt = '';
+  
+      // **Manejo de preguntas tipo 1 y 3 (selección simple o "yes or no")**
       if (question.questionTypeID === 1 || question.questionTypeID === 3) {
-        let selectedAnswer = answer ? answer.textEn : ''; // Asigna el texto de la respuesta si existe
-        let translationChatGpt = answer ? answer.translationChatGptEn : '';
-
-        // Para preguntas de tipo "yes or no" (tipo 3), si no se seleccionó nada, asignar 'No'
+        selectedAnswer = answer 
+          ? (this.selectedLanguage === 'es' ? answer.textEs : answer.textEn) || '' 
+          : ''; 
+  
+        translationChatGpt = answer 
+          ? (this.selectedLanguage === 'es' ? answer.translationChatGptEs : answer.translationChatGptEn) || '' 
+          : '';
+  
+        // Si es pregunta tipo 3 y no hay respuesta seleccionada, se asigna 'No'
         if (question.questionTypeID === 3 && !selectedAnswer) {
           const noAlternative = question.alternatives.find((alt: Alternative) => alt.textEn === 'No');
           if (noAlternative) {
-            selectedAnswer = 'No';
-            translationChatGpt = noAlternative.translationChatGptEn;
-          } else {
-            selectedAnswer = 'No';
-            translationChatGpt = '';
+            selectedAnswer = this.selectedLanguage === 'es' ? 'No' : noAlternative.textEn;
+            translationChatGpt = this.selectedLanguage === 'es' ? '' : noAlternative.translationChatGptEn;
           }
         }
-
-        return {
-          questionText: question.textEn,
-          selectedAnswer: selectedAnswer,
-          translationChatGpt: translationChatGpt
-        };
-
-        // Manejo de preguntas de tipo 2 (input de texto)
+  
+      // **Manejo de preguntas tipo 2 (input de texto)**
       } else if (question.questionTypeID === 2) {
-        // Obtener la primera alternativa que exista
-        const defaultAlternative = question.alternatives.length > 0 ? question.alternatives[0] : null;
-    
-        // Usa el valor de TextEn de la primera alternativa como translationChatGpt
-        let translationChatGpt = defaultAlternative ? defaultAlternative.translationChatGptEn : '';
-    
-        // Reemplaza {respuesta} en translationChatGpt con el valor de selectedAnswer
-        const selectedAnswer: string = answer ? answer.selectedAnswerId : ''; // Usa el texto ingresado como selectedAnswer
-        translationChatGpt = translationChatGpt.replace('{respuesta}', selectedAnswer); // Reemplazo
-    
-        return {
-            questionText: question.textEn,
-            selectedAnswer: selectedAnswer, // Usa el texto ingresado como selectedAnswer
-            translationChatGpt: translationChatGpt // Usa el texto modificado de translationChatGpt
-        };
-
-        // Manejo de preguntas de tipo 4 (slider)
+        const defaultAlternative = question.alternatives[0] || null;
+  
+        // **Asignación correcta según el idioma**
+        translationChatGpt = defaultAlternative 
+          ? (this.selectedLanguage === 'es' 
+              ? defaultAlternative.translationChatGptEs 
+              : defaultAlternative.translationChatGptEn) 
+          : '';
+  
+        selectedAnswer = answer ? answer.selectedAnswerId || '' : ''; 
+        
+      // **Manejo de preguntas tipo 4 (slider)**
       } else if (question.questionTypeID === 4) {
-        let selectedAnswer = answer ? answer.textEn : '3'; // Si no hay respuesta, el valor predeterminado es '3'
-        let translationChatGpt = answer ? answer.translationChatGptEn : 'On a range from 1 through 5, 1 being the shortest and 5 being the longest, the length should be a 3';
-
-        return {
-          questionText: question.textEn,
-          selectedAnswer: selectedAnswer,
-          translationChatGpt: translationChatGpt
-        };
-
-        // Manejo de otros tipos de preguntas
+        selectedAnswer = answer 
+          ? (this.selectedLanguage === 'es' ? answer.textEs : answer.textEn) || '3' 
+          : '3'; // Valor predeterminado: '3'
+        translationChatGpt = answer 
+          ? (this.selectedLanguage === 'es' ? answer.translationChatGptEs : answer.translationChatGptEn) 
+          : 'On a range from 1 through 5, the length should be a 3';
+  
+      // **Manejo de otros tipos de preguntas**
       } else {
-        const selectedAlternative = question.alternatives.find((alt: Alternative) => alt.alternativeID === (answer ? answer.selectedAnswerId : null));
-
-        return {
-          questionText: question.textEn,
-          selectedAnswer: selectedAlternative ? selectedAlternative.textEn : null, // Si no hay alternativa seleccionada, devuelve null
-          translationChatGpt: answer ? answer.translationChatGptEn : null
-        };
+        const selectedAlternative = question.alternatives.find(
+          (alt: Alternative) => alt.alternativeID === (answer ? answer.selectedAnswerId : null)
+        );
+        selectedAnswer = selectedAlternative 
+          ? (this.selectedLanguage === 'es' ? selectedAlternative.textEs : selectedAlternative.textEn) 
+          : '';
+  
+        translationChatGpt = answer 
+          ? (this.selectedLanguage === 'es' ? answer.translationChatGptEs : answer.translationChatGptEn) 
+          : '';
       }
+  
+      // **Reemplazo de {respuesta} por selectedAnswer en todas las preguntas**
+      if (translationChatGpt.includes('{respuesta}')) {
+        translationChatGpt = translationChatGpt.replace('{respuesta}', selectedAnswer);
+      }
+  
+      return {
+        questionText: this.selectedLanguage === 'es' ? question.textEs : question.textEn,
+        selectedAnswer: selectedAnswer,
+        translationChatGpt: translationChatGpt,
+      };
     }).filter(response => response !== null); // Filtra las preguntas sin respuesta
-
-    // Creación del payload de solicitud
+  
+    // **Creación del payload de solicitud**
     this.requestPayload = {
       userID: this.userId,
       categoryName: this.selectedCategoryName,
       categoryPrompt: this.categoryPrompt,
-      questions: userResponses // Solo incluye las preguntas con respuestas
+      questions: userResponses
     };
-
+  
     console.log('Payload de solicitud:', JSON.stringify(this.requestPayload, null, 2));
-
-    // Envío de las respuestas del usuario a través del servicio
+  
+    // **Envío de las respuestas del usuario**
     this.questionService.processUserResponses(this.requestPayload).subscribe(
       response => {
         this.chatGptResponse = response.response;
         this.isLoading = false;
         this.showResponse = true;
         console.log('Respuesta de ChatGPT:', this.chatGptResponse);
-
-        // Acciones posteriores al obtener la respuesta
+  
+        // Acciones posteriores a la respuesta
         this.getResponseById(response.responseID);
         this.getLastResponse();
         this.scrollToResponse();
@@ -298,9 +319,7 @@ export class FormComponent implements OnInit {
       }
     );
   }
-
-
-
+  
   getResponseById(id: number): void {
     console.log('Obteniendo respuesta por ID:', id);
     this.questionService.getResponseById(id).subscribe(

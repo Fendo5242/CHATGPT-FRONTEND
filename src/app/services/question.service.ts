@@ -6,8 +6,8 @@ import { Observable, forkJoin } from 'rxjs';
   providedIn: 'root'
 })
 export class QuestionService {
-  //private baseUrl = 'https://localhost:7071';
-  private baseUrl = 'http://hugotorrico-002-site3.ltempurl.com'; 
+  private baseUrl = 'https://localhost:7071';
+  //private baseUrl = 'http://hugotorrico-002-site3.ltempurl.com'; 
   private apiUrl = `${this.baseUrl}/Categories`;
   private userResponseUrl = `${this.baseUrl}/UserResponse`;
   private questionUrl = `${this.baseUrl}/Questions`;
@@ -149,6 +149,11 @@ export class QuestionService {
 
   loginUser(loginRequest: any): Observable<any> {
     return this.http.post<any>(`${this.userUrl}/Login`, loginRequest);
+  }
+
+   // Obtener todos los lenguajes habilitados
+  getLanguages(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/Languages`);
   }
 }
 
